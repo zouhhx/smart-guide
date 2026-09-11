@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "seq": 4,
+  "reply": "云猴是展厅展示的展品名称，具体信息请参考展厅的介绍资料。",
+  "actions": [],
+  "target": "2",
+  "answerSource": "LLM",
+  "context": {
+    "rawModelOutput": "{\n  \"answerStatus\": \"ANSWERED\",\n  \"reply\": \"云猴是展厅展示的展品名称，具体信息请参考展厅的介绍资料。\"\n}",
+    "modelProvider": "ollama",
+    "robotAnswerStatus": "ANSWERED",
+    "refusalFallback": false,
+    "contextEligible": true,
+    "replyKind": "ANSWER",
+    "technicalFallback": false,
+    "invalidModelAnswer": false,
+    "answerSource": "LLM",
+    "attachRelatedMedia": true,
+    "finalRoute": "LLM_DIRECT",
+    "routeTrace": [
+      {
+        "handler": "route_policy",
+        "matched": false,
+        "status": "NONE",
+        "reason": "NO_MATCH",
+        "ruleId": "",
+        "ruleName": ""
+      },
+      {
+        "handler": "current_datetime",
+        "matched": false,
+        "status": "SKIPPED",
+        "reason": "NO_MATCH"
+      },
+      {
+        "handler": "web_search_intent",
+        "matched": false,
+        "status": "NO_MATCH",
+        "reason": "NO_MATCH"
+      },
+      {
+        "handler": "final_route",
+        "matched": true,
+        "status": "LLM_DIRECT",
+        "reason": "LLM"
+      }
+    ],
+    "conversationId": "v5-staging-r1-7d721873-e1bc-4387-9da6-6414fbc603f1"
+  },
+  "answerStatus": "ANSWERED",
+  "reason": null,
+  "teachable": false,
+  "traceId": "4"
+}

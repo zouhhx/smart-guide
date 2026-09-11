@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-09-07T06:55:46.148196+00:00",
+  "endpoint": "http://192.168.16.61:3481/api/knowledge/teaching/analyze",
+  "request": {
+    "schemaVersion": "1.0.0",
+    "analysisId": "4d8f9aa4-5f3f-441c-88bf-965aa94422fb",
+    "teachingTurnId": "6fdeb1ae-a6cb-4e66-b0ac-231d7e6cb575",
+    "revision": 1,
+    "robotId": "robot_001",
+    "sessionId": "v5-staging-r1-5f4d35ed-ba96-45f7-b788-1e3c1a6f9e6b",
+    "question": "什么是本次V5联调？",
+    "accumulatedTranscript": "本次联调检查机器人问答、现场补充、临时复述以及保存待审核草稿，不发布正式知识。",
+    "fragmentCount": 1,
+    "isFinal": true,
+    "completionReason": "button"
+  },
+  "httpStatus": 200,
+  "elapsedSeconds": 2.688,
+  "response": {
+    "schemaVersion": "1.0.0",
+    "analysisId": "4d8f9aa4-5f3f-441c-88bf-965aa94422fb",
+    "teachingTurnId": "6fdeb1ae-a6cb-4e66-b0ac-231d7e6cb575",
+    "revision": 1,
+    "status": "OK",
+    "relevance": "RELATED",
+    "completeness": "INSUFFICIENT",
+    "factuality": "UNVERIFIED",
+    "canReplay": false,
+    "replayAnswer": "",
+    "warnings": [
+      "The provided information describes the *activities* of the联调 (testing/debugging) rather than defining *what* the V5联调 is in general terms. The response should reflect this limitation while cleaning up the language."
+    ],
+    "evidenceRefs": [],
+    "traceId": "cbd81d94-df8f-4788-9e75-4b11a479c1f4"
+  }
+}

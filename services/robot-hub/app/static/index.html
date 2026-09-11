@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>展厅流程中枢系统 v5.0</title>
+<link rel="stylesheet" href="/static/css/style.css?v=20260427-logsv2">
+</head>
+<body>
+<div id="app">
+  <!-- 顶部导航 -->
+  <header class="header">
+    <h1>🏛️ 展厅流程中枢</h1>
+    <div class="header-info">
+      <span id="current-special-badge" class="badge">当前专场: 加载中...</span>
+      <span id="robot-count-badge" class="badge badge-info">在线机器人: 0</span>
+      <span id="sync-time" class="badge badge-muted">同步: --</span>
+      <button class="btn btn-sm" onclick="triggerSync()">🔄 立即同步</button>
+    </div>
+  </header>
+
+  <!-- 标签页 -->
+  <nav class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard')">📊 总览</button>
+    <button class="tab" onclick="switchTab('control')">🎮 控制面板</button>
+    <button class="tab" onclick="switchTab('robotctrl')">🕹️ 机器人控制</button>
+    <button class="tab" onclick="switchTab('workflows')">📋 流程管理</button>
+    <button class="tab" onclick="switchTab('bindings')">📍 点位绑定</button>
+    <button class="tab" onclick="switchTab('tourpoints')">🚶 参观配置</button>
+    <button class="tab" onclick="switchTab('music')">🎵 音乐曲库</button>
+    <button class="tab" onclick="switchTab('intents')">🧠 意图映射</button>
+    <button class="tab" onclick="switchTab('schedules')">⏰ 定时任务</button>
+    <button class="tab" onclick="switchTab('visitors')">👤 访客记忆</button>
+    <button class="tab" onclick="switchTab('settings')">⚙️ 系统设置</button>
+    <button class="tab" onclick="switchTab('logs')">📝 日志</button>
+  </nav>
+
+  <!-- ============================================================ -->
+  <!-- 总览 -->
+  <!-- ============================================================ -->
+  <div id="tab-dashboard" class="tab-content active">
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-value" id="stat-halls">-</div><div class="stat-label">展馆</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-areas">-</div><div class="stat-label">展区</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-exhibits">-</div><div class="stat-label">展项</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-specials">-</div><div class="stat-label">专场</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-resources">-</div><div class="stat-label">资源</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-equipments">-</div><div class="stat-label">设备</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-positions">-</div><div class="stat-label">导航点位</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-workflows">-</div><div class="stat-label">流程</div></div>
+      <div class="stat-card highlight"><div class="stat-value" id="stat-current_special">-</div><div class="stat-label">当前专场</div></div>
+      <div class="stat-card highlight"><div class="stat-value" id="stat-online_robots">-</div><div class="stat-label">在线机器人</div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 控制面板 — 零ID化 -->
+  <!-- ============================================================ -->
+  <div id="tab-control" class="tab-content">
+    <div class="panel-grid">
+      <!-- 专场切换 -->
+      <div class="panel">
+        <h3>🎬 专场切换</h3>
+        <div class="form-group">
+          <label>选择专场</label>
+          <select id="ctrl-special" class="select-full"></select>
+        </div>
+        <button class="btn btn-primary" onclick="doSwitchSpecial()">切换专场</button>
+        <div id="ctrl-special-result" class="result-box"></div>
+      </div>
+
+      <!-- 组策略 -->
+      <div class="panel">
+        <h3>⚡ 组策略执行</h3>
+        <div class="form-group">
+          <label>选择组策略</label>
+          <select id="ctrl-group" class="select-full"></select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="doGroupCommand()">⚡ 执行</button>
+        </div>
+        <div id="ctrl-group-result" class="result-box"></div>
+      </div>
+
+      <!-- 设备控制 -->
+      <div class="panel">
+        <h3>💡 设备控制</h3>
+        <div class="form-group">
+          <label>选择展区</label>
+          <select id="ctrl-eq-area" class="select-full" onchange="loadEquipmentsByArea()"></select>
+        </div>
+        <div class="form-group">
+          <label>选择设备</label>
+          <select id="ctrl-equipment" class="select-full"></select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="doEquipment('on')">开启</button>
+          <button class="btn btn-danger" onclick="doEquipment('off')">关闭</button>
+        </div>
+        <div id="ctrl-eq-result" class="result-box"></div>
+      </div>
+
+      <!-- 资源播放 -->
+      <div class="panel">
+        <h3>🎵 资源播放</h3>
+        <div class="form-group">
+          <label>选择专场</label>
+          <select id="ctrl-res-special" class="select-full" onchange="loadExhibitsForResource()"></select>
+        </div>
+        <div class="form-group">
+          <label>选择展项</label>
+          <select id="ctrl-res-exhibit" class="select-full" onchange="loadResourcesByExhibitSpecial()"></select>
+        </div>
+        <div class="form-group">
+          <label>选择资源</label>
+          <select id="ctrl-res-resource" class="select-full"></select>
+        </div>
+        <button class="btn btn-primary" onclick="doPlayResource()">▶ 播放</button>
+        <div id="ctrl-res-result" class="result-box"></div>
+      </div>
+
+      <!-- 机器人配置 -->
+      <div class="panel">
+        <h3>🤖 机器人配置</h3>
+        <p class="hint">修改后自动下发到所有在线机器人。默认展开"在线机器人 & 控制"，其他项按需展开。</p>
+
+        <!-- 默认展开: 只显示在线机器人单行紧凑列表 -->
+        <div class="accordion open" id="ac-online">
+          <div class="accordion-head" onclick="toggleAccordion('ac-online')">
+            <span>📡 在线机器人 <span id="cfg-online-count" style="color:#94a3b8;font-weight:normal">(0)</span></span>
+            <span class="ac-arrow">▶</span>
+          </div>
+          <div class="accordion-body" style="padding:6px 10px">
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">🐾 豹小秘 mini</div>
+            <div id="cfg-robot-online" class="hint">加载中...</div>
+            <div style="font-size:11px;color:#94a3b8;margin:8px 0 4px 0">🦾 宇树机器人</div>
+            <div id="cfg-unitree-online" class="hint">加载中...</div>
+          </div>
+        </div>
+
+        <!-- 手动控制已迁至 "🕹️ 机器人控制" 独立 tab -->
+        <!-- 基本配置已迁至 "系统设置 → 豹小秘基本配置" 卡片 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 🕹️ 机器人控制 (独立模块) -->
+  <!-- ============================================================ -->
+  <div id="tab-robotctrl" class="tab-content">
+    <div class="robot-panel-grid">
+
+      <!-- ========== 豹小秘 mini ========== -->
+      <div class="robot-card" data-robot="baoxiaomi">
+        <div class="robot-card-header">
+          <div class="robot-card-avatar">🐾</div>
+          <div class="robot-card-title-wrap">
+            <div class="robot-card-title">豹小秘 mini</div>
+            <div class="robot-card-subtitle">WebSocket · /ws/robot</div>
+          </div>
+          <div class="robot-card-status" id="bxm-status-pill">
+            <span class="rc-dot rc-dot-gray"></span>
+            <span class="rc-status-text">—</span>
+          </div>
+        </div>
+
+        <div class="robot-card-meta" id="bxm-meta">
+          <div class="meta-row"><span class="meta-k">机器人</span>
+            <select id="ctrl-robot-id" class="meta-v"></select>
+          </div>
+          <div class="meta-row"><span class="meta-k">电量</span><span class="meta-v" id="bxm-battery">—</span></div>
+          <div class="meta-row"><span class="meta-k">位置</span><span class="meta-v" id="bxm-location">—</span></div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">⚡ 快捷操作</div>
+          <div class="btn-grid">
+            <button class="btn-chip" onclick="robotCmd('query_status',{})">📊 查状态</button>
+            <button class="btn-chip btn-chip-warn" onclick="robotCmd('cancel',{reason:'手动取消'})">⛔ 取消任务</button>
+            <input id="ctrl-listen-timeout" type="number" min="5" max="120" value="30" style="width:60px" title="收音时长(秒), 传给 APK 的 timeout 字段">
+            <button class="btn-chip" onclick="robotStartListen()" title="开始收音; timeout 传给 APK">🎤 开始收音</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">🗣️ 语音播报</div>
+          <div class="inline-row">
+            <input id="ctrl-tts-text" type="text" placeholder="输入要机器人说的话" class="inline-grow">
+            <button class="btn btn-primary btn-sm" onclick="robotTts()">▶ 播报</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">📍 导航</div>
+          <div class="inline-row">
+            <select id="ctrl-nav-point" class="inline-grow"></select>
+            <button class="btn btn-primary btn-sm" onclick="robotNavigate()">前往</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">📺 屏幕展示</div>
+          <div class="inline-row">
+            <input id="ctrl-show-text" type="text" placeholder="展示文字" class="inline-grow">
+            <button class="btn btn-sm" onclick="robotShow('text')">显示</button>
+            <button class="btn btn-sm btn-chip-warn" onclick="robotShow('clear')">清空</button>
+          </div>
+        </div>
+
+        <div id="robot-cmd-result" class="result-box robot-result"></div>
+        <div id="robot-control-empty" class="robot-offline-overlay" style="display:none">
+          <div class="offline-icon">🔌</div>
+          <div class="offline-text">暂无在线豹小秘可控制</div>
+          <div class="offline-sub">请确认机器人已连接 WebSocket</div>
+        </div>
+      </div>
+
+      <!-- ========== 宇树机器人 G1 ========== -->
+      <div class="robot-card" data-robot="unitree">
+        <div class="robot-card-header">
+          <div class="robot-card-avatar">🦾</div>
+          <div class="robot-card-title-wrap">
+            <div class="robot-card-title">宇树 G1</div>
+            <div class="robot-card-subtitle" id="unitree-card-subtitle">HTTP Gateway · —</div>
+          </div>
+          <div class="robot-card-status" id="unitree-status-pill">
+            <span class="rc-dot rc-dot-gray"></span>
+            <span class="rc-status-text">—</span>
+          </div>
+        </div>
+
+        <div class="robot-card-meta">
+          <div class="meta-row"><span class="meta-k">ROS2</span><span class="meta-v" id="unitree-ros2">—</span></div>
+          <div class="meta-row"><span class="meta-k">当前地图</span><span class="meta-v" id="unitree-cur-map">—</span></div>
+          <div class="meta-row"><span class="meta-k">库存</span><span class="meta-v" id="unitree-lib">—</span></div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">👋 快捷动作</div>
+          <div class="btn-grid">
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[2003]})">👋 挥手</button>
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[2016]})">🫡 敬礼</button>
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[2014]})">💖 比心</button>
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[2005]})">🤝 握手</button>
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[3056]})">💪 战斗姿</button>
+            <button class="btn-chip" onclick="unitreeCmd('motions.playback.create',{motions:[2000]})">🧍 复位</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">🎙️ 语音 / 问答</div>
+          <div class="inline-row">
+            <input id="unitree-ctrl-tts-text" type="text" placeholder="让机器人说的话 (1~200字)" maxlength="200" class="inline-grow">
+            <button class="btn btn-primary btn-sm" onclick="unitreeCtrlTts()">▶ 播报</button>
+            <button class="btn btn-sm btn-chip-warn" onclick="unitreeCtrlTtsStop()">🔇 打断</button>
+          </div>
+          <div class="inline-row" style="margin-top:6px">
+            <input id="unitree-ctrl-asr-listen" type="number" min="0" max="600" value="0" style="width:60px" title="收音时长(秒), 0=持续">
+            <button class="btn-chip" onclick="unitreeCtrlAsrStart()" title="启动 ASR; 收音时长>0 时 N 秒后自动停, 回唤醒词模式">🎧 启动 ASR</button>
+            <button class="btn-chip btn-chip-warn" onclick="unitreeCtrlAsrStop()">停 ASR</button>
+            <input id="unitree-ctrl-asr-duration" type="number" min="3" max="60" value="10" style="width:60px" title="等待时长(秒)">
+            <button class="btn-chip" onclick="unitreeCtrlAsrListenOnce()" title="订阅下一条 asr 文本(或超时), 期间常规语音处理挂起; 需先点启动 ASR">🎙️ 等一条识别</button>
+            <button class="btn-chip" onclick="unitreeCtrlFace('start')">🙂 启动人脸</button>
+            <button class="btn-chip btn-chip-warn" onclick="unitreeCtrlFace('stop')">停人脸</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">🤸 动作库 / 💃 舞蹈</div>
+          <div class="inline-row">
+            <select id="unitree-ctrl-motion" class="inline-grow"></select>
+            <button class="btn btn-primary btn-sm" onclick="unitreeCtrlMotion()">执行</button>
+          </div>
+          <div class="inline-row" style="margin-top:6px">
+            <select id="unitree-ctrl-dance" class="inline-grow"></select>
+            <button class="btn btn-primary btn-sm" onclick="unitreeCtrlDance()">💃 跳舞</button>
+            <button class="btn btn-sm btn-chip-warn" onclick="unitreeCtrlDanceStop()">⏹ 停舞</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">📍 导航</div>
+          <div class="inline-row">
+            <select id="unitree-ctrl-map" class="inline-grow" onchange="onUnitreeCtrlMapChange(this)" style="flex:1.2"></select>
+            <button class="btn-chip" onclick="unitreeMapRename()" title="给地图起中文别名">✏️</button>
+            <select id="unitree-ctrl-point" class="inline-grow"><option value="">点位</option></select>
+            <button class="btn btn-primary btn-sm" onclick="unitreeCtrlNav()">前往</button>
+          </div>
+          <div class="inline-row" style="margin-top:6px">
+            <button class="btn-chip" onclick="unitreeCtrlNavCtl('pause')">⏸ 暂停</button>
+            <button class="btn-chip" onclick="unitreeCtrlNavCtl('resume')">▶ 恢复</button>
+            <button class="btn-chip btn-chip-warn" onclick="unitreeCtrlNavCtl('cancel')">⛔ 取消</button>
+          </div>
+        </div>
+
+        <div class="robot-section">
+          <div class="robot-section-title">🔊 音量</div>
+          <div class="inline-row" style="align-items:center">
+            <input id="unitree-ctrl-volume" type="range" min="0" max="100" value="60" oninput="document.getElementById('unitree-ctrl-volume-val').textContent=this.value" class="inline-grow">
+            <span id="unitree-ctrl-volume-val" style="min-width:32px;text-align:right;font-weight:600">60</span>
+            <button class="btn btn-sm" onclick="unitreeCtrlVolume()">应用</button>
+          </div>
+        </div>
+
+        <div id="unitree-ctrl-result" class="result-box robot-result"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 流程管理 -->
+  <!-- ============================================================ -->
+  <div id="tab-workflows" class="tab-content">
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="showCreateWorkflow()">+ 新建流程</button>
+      <button class="btn" onclick="showTemplates()">📋 从模板创建</button>
+      <button class="btn" onclick="loadWorkflows()">🔄 刷新</button>
+    </div>
+    <div id="workflow-list" class="card-list"></div>
+
+    <!-- 图形化流程编辑器 -->
+    <div id="workflow-editor" style="display:none">
+      <!-- 流程基本信息 -->
+      <div class="wf-editor-header">
+        <h3 id="wf-editor-title">✏️ 编辑流程</h3>
+        <div class="wf-editor-info">
+          <div class="form-group">
+            <label>流程名称</label>
+            <input id="wf-name" type="text" placeholder="如：日常参观讲解">
+          </div>
+          <div class="form-group">
+            <label>触发词（机器人唤醒后说这句话启动流程）</label>
+            <input id="wf-trigger" type="text" placeholder="如：开始日常参观讲解">
+          </div>
+          <div class="form-group">
+            <label>描述</label>
+            <input id="wf-desc" type="text" placeholder="可选">
+          </div>
+          <div class="form-group">
+            <label>适用专场</label>
+            <select id="wf-special" class="select-full">
+              <option value="">全部专场通用</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拖拽编辑区 -->
+      <div class="wf-drag-area">
+        <!-- 左侧积木面板 -->
+        <div class="wf-block-palette">
+          <div class="palette-title">📦 步骤积木</div>
+          <div class="palette-hint">拖到右侧画布中添加</div>
+
+          <div class="palette-group-title">🐾 豹小秘 mini (WebSocket)</div>
+          <div class="block-item block-navigate" draggable="true" data-type="navigate">🗺️ 导航到点位</div>
+          <div class="block-item block-tts" draggable="true" data-type="tts">🎤 语音播报</div>
+          <div class="block-item block-show" draggable="true" data-type="show">📺 屏幕展示</div>
+          <div class="block-item block-listen" draggable="true" data-type="listen">👂 开始收音</div>
+
+          <div class="palette-group-title">🦾 宇树机器人 (HTTP 网关)</div>
+          <div class="block-item block-unitree_tts" draggable="true" data-type="unitree_tts">🎙️ 宇树·语音播报</div>
+          <div class="block-item block-unitree_tts_stop" draggable="true" data-type="unitree_tts_stop">🔇 宇树·打断播报</div>
+          <div class="block-item block-unitree_volume" draggable="true" data-type="unitree_volume">🔊 宇树·设置音量</div>
+          <div class="block-item block-unitree_motion" draggable="true" data-type="unitree_motion">🤸 宇树·执行动作</div>
+          <div class="block-item block-unitree_dance" draggable="true" data-type="unitree_dance">💃 宇树·跳舞</div>
+          <div class="block-item block-unitree_dance_stop" draggable="true" data-type="unitree_dance_stop">⏹️ 宇树·停舞</div>
+          <div class="block-item block-unitree_map_apply" draggable="true" data-type="unitree_map_apply">🗺️ 宇树·切换地图</div>
+          <div class="block-item block-unitree_nav" draggable="true" data-type="unitree_nav">📍 宇树·导航到点位</div>
+          <div class="block-item block-unitree_nav_control" draggable="true" data-type="unitree_nav_control">⏯️ 宇树·导航控制</div>
+          <div class="block-item block-unitree_asr" draggable="true" data-type="unitree_asr">🎧 宇树·语音识别</div>
+          <div class="block-item block-unitree_face" draggable="true" data-type="unitree_face">🙂 宇树·人脸识别</div>
+
+          <div class="palette-group-title">🎛️ 中控 / 展项</div>
+          <div class="block-item block-resource_play" draggable="true" data-type="resource_play">▶️ 播放资源</div>
+          <div class="block-item block-switch_special" draggable="true" data-type="switch_special">🎛️ 切换专场</div>
+          <div class="block-item block-group_command" draggable="true" data-type="group_command">⚡ 组策略</div>
+          <div class="block-item block-equipment" draggable="true" data-type="equipment">🔌 设备控制</div>
+          <div class="block-item block-digital_human" draggable="true" data-type="digital_human">🤖 数字人控制</div>
+          <div class="block-item block-pad_active" draggable="true" data-type="pad_active">📱 激活展项</div>
+          <div class="block-item block-custom_request" draggable="true" data-type="custom_request">🌐 自定义请求</div>
+
+          <div class="palette-group-title">🧩 通用</div>
+          <div class="block-item block-delay" draggable="true" data-type="delay">⏱️ 延时等待</div>
+          <div class="block-item block-end" draggable="true" data-type="end">🏁 结束</div>
+        </div>
+
+        <!-- 右侧画布 -->
+        <div class="wf-canvas" id="wf-canvas">
+          <div class="canvas-title">🎯 流程画布</div>
+          <div class="canvas-steps" id="wf-steps">
+            <!-- 步骤块动态渲染 -->
+          </div>
+          <div class="canvas-drop-zone" id="wf-drop-zone">
+            <div class="drop-hint">⬇️ 将积木拖到这里添加步骤</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="wf-editor-footer">
+        <button class="btn btn-primary btn-lg" onclick="saveWorkflow()">💾 保存流程</button>
+        <button class="btn btn-lg" onclick="cancelWorkflowEdit()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 点位绑定 -->
+  <!-- ============================================================ -->
+  <div id="tab-bindings" class="tab-content">
+    <div class="panel">
+      <h3>📍 点位 → 展项/展区 绑定</h3>
+      <p class="hint">配置机器人导航点位与展项的对应关系。到达点位后系统自动查对应展项；宇树机器人另外会 TTS 播报"到达XX"。</p>
+
+      <!-- 手动同步地图按钮 -->
+      <div class="form-group" style="background:#f7fafc;padding:10px 12px;border-left:3px solid #4299e1;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="syncOrionStarMap()" style="margin:0">🔄 手动同步地图点位 (豹小秘)</button>
+          <span class="hint" id="orion-active-map" style="color:#666;font-size:12px">活地图: 加载中…</span>
+        </div>
+        <div class="hint" style="color:#888;font-size:12px;margin-top:6px">
+          换地图后点这里立即拉取最新点位; 同名点位的绑定 / 流程会自动跟随到新地图, 不再需要手动重绑。
+        </div>
+        <div id="orion-sync-result" style="margin-top:6px;font-size:12px"></div>
+      </div>
+
+      <div class="form-group">
+        <label>机器人类型</label>
+        <select id="bind-robot" class="select-full" onchange="switchBindRobot()">
+          <option value="baoxiaomi">豹小秘 mini (nav_positions)</option>
+          <option value="unitree">宇树 G1 (map + point)</option>
+        </select>
+      </div>
+
+      <!-- 豹小秘: 单级点位选择 -->
+      <div id="bind-baoxiaomi-section">
+        <div class="form-group">
+          <label>选择点位</label>
+          <select id="bind-position" class="select-full"></select>
+        </div>
+      </div>
+
+      <!-- 宇树: 地图 → 点位 二级选择 -->
+      <div id="bind-unitree-section" style="display:none">
+        <div class="form-group">
+          <label>选择地图</label>
+          <select id="bind-unitree-map" class="select-full" onchange="onBindUnitreeMapChange(this)"></select>
+        </div>
+        <div class="form-group">
+          <label>选择点位 (航点)</label>
+          <select id="bind-unitree-point" class="select-full"><option value="">先选地图</option></select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>绑定类型</label>
+        <select id="bind-type" class="select-full" onchange="updateBindTargetOptions()">
+          <option value="exhibit">展项</option>
+          <option value="area">展区</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>绑定目标</label>
+        <select id="bind-target" class="select-full"></select>
+      </div>
+      <button class="btn btn-primary" onclick="createBinding()">保存绑定</button>
+    </div>
+
+    <h3>🐾 豹小秘 绑定列表</h3>
+    <div id="bindings-list" class="card-list"></div>
+
+    <h3 style="margin-top:20px">🐕 宇树 绑定列表</h3>
+    <div id="unitree-bindings-list" class="card-list"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 参观配置 -->
+  <!-- ============================================================ -->
+  <div id="tab-tourpoints" class="tab-content">
+    <div class="panel">
+      <h3>🚶 参观讲解点位配置</h3>
+      <p class="hint">配置哪些点位支持语音触发参观讲解流程。用户说"带我参观XX"时，系统只在已启用的点位中查找。</p>
+      <div class="form-group">
+        <label>选择点位</label>
+        <select id="tp-position" class="select-full"></select>
+      </div>
+      <div class="form-group">
+        <label>是否启用</label>
+        <select id="tp-enabled" class="select-full">
+          <option value="1">✅ 启用</option>
+          <option value="0">❌ 禁用</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>结束语</label>
+        <input id="tp-end-phrase" type="text" class="input-full" value="感谢参观，欢迎下次再来！" placeholder="参观结束时的TTS文案">
+      </div>
+      <div class="form-group">
+        <label>参观结束后返回的点位</label>
+        <select id="tp-return-pos" class="select-full"><option value="">-- 自动查找接待点 --</option></select>
+      </div>
+      <div class="form-group">
+        <label>拍照点</label>
+        <select id="tp-photo-point" class="select-full">
+          <option value="0">否</option>
+          <option value="1">是，作为机器人拍照点</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>讲解结束后主动建议拍照</label>
+        <select id="tp-photo-suggest" class="select-full">
+          <option value="0">否</option>
+          <option value="1">是（仅机械臂展项启用）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>主动建议拍照话术</label>
+        <input id="tp-photo-suggest-text" type="text" class="input-full" placeholder="默认：这里是机械臂展示区，要不要和我合张影留念？">
+      </div>
+      <div class="form-group">
+        <label>照片二维码内容/下载地址前缀</label>
+        <input id="tp-photo-url" type="text" class="input-full" placeholder="可选；留空时由中枢生成本地照片标识">
+      </div>
+      <button class="btn btn-primary" onclick="saveTourPoint()">💾 保存配置</button>
+    </div>
+    <h3>当前参观点位列表</h3>
+    <p class="hint" style="margin-bottom:12px">✅=用户可语音触发 | ❌=不响应语音参观</p>
+    <div id="tourpoints-list" class="card-list"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 音乐曲库 -->
+  <!-- ============================================================ -->
+  <div id="tab-music" class="tab-content">
+    <div class="panel">
+      <h3>🎵 音乐曲库</h3>
+      <p class="hint">用户说"放一首歌/播放音乐"时,系统从下面启用的曲目中随机挑一首,推送给 APK 播放。</p>
+      <div class="form-group">
+        <label>音乐文件 URL 前缀 (APK 拉取地址) <span class="hint" style="font-weight:normal">— 可选</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="music-url-base" type="text" class="input-full" placeholder="留空自动用本机 LAN IP, 仅外网/反代场景才需要填">
+          <button class="btn" onclick="saveMusicUrlBase()">💾 保存</button>
+        </div>
+        <p class="hint" style="margin-top:6px">留空时系统会自动探测本机出网网卡 IP + HTTP 端口, 当前自动地址: <code id="music-auto-base">检测中...</code></p>
+      </div>
+      <div class="form-group">
+        <label>上传新曲目</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="music-file" type="file" accept=".mp3,.wav,.m4a,.aac,.ogg,.flac" style="flex:1;min-width:240px">
+          <input id="music-name" type="text" placeholder="显示名 (留空=文件名)" style="flex:1;min-width:160px">
+          <button class="btn btn-primary" onclick="uploadMusic()">⬆️ 上传</button>
+        </div>
+        <p class="hint" style="margin-top:6px">支持 mp3/wav/m4a/aac/ogg/flac,单文件 ≤ 50MB。</p>
+      </div>
+    </div>
+    <h3>曲目列表</h3>
+    <div id="music-list" class="card-list"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 意图映射 -->
+  <!-- ============================================================ -->
+  <div id="tab-intents" class="tab-content">
+    <div class="panel">
+      <h3>🧠 语音意图 → 命令映射</h3>
+      <p class="hint">配置用户说出某些话后，系统自动执行的操作。例如"开灯" → 执行组策略"灯全开"。</p>
+      <div class="form-group">
+        <label>意图标识</label>
+        <input id="intent-name" type="text" placeholder="如：lights_on">
+      </div>
+      <div class="form-group">
+        <label>用户说法</label>
+        <input id="intent-display" type="text" placeholder="如：开灯">
+      </div>
+      <div class="form-group">
+        <label>命令类型</label>
+        <select id="intent-cmd-type" class="select-full" onchange="updateIntentTargetOptions()">
+          <option value="group_command">组策略</option>
+          <option value="equipment">设备控制</option>
+          <option value="special_switch">专场切换</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>命令目标</label>
+        <select id="intent-target" class="select-full"></select>
+      </div>
+      <div class="form-group">
+        <label>动作</label>
+        <select id="intent-action" class="select-full">
+          <option value="on">开启</option>
+          <option value="off">关闭</option>
+          <option value="switch">切换</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>回复文案</label>
+        <input id="intent-reply" type="text" placeholder="如：好的，灯光已打开">
+      </div>
+      <button class="btn btn-primary" onclick="createIntentMapping()">保存映射</button>
+    </div>
+    <h3>当前映射列表</h3>
+    <div id="intents-list" class="card-list"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 定时任务 -->
+  <!-- ============================================================ -->
+  <div id="tab-schedules" class="tab-content">
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="showCreateSchedule()">+ 新建任务</button>
+      <button class="btn" onclick="loadSchedules()">🔄 刷新</button>
+    </div>
+    <div id="schedule-list" class="card-list"></div>
+
+    <!-- 定时任务创建向导 -->
+    <div id="schedule-editor" style="display:none">
+      <div class="panel" style="margin-top:16px">
+        <h3 id="sched-editor-title">➕ 新建定时任务</h3>
+        <div class="form-group">
+          <label>任务名称</label>
+          <input id="sched-name" type="text" placeholder="如：每日开馆">
+        </div>
+        <div class="form-group">
+          <label>时间规则</label>
+          <select id="sched-type" class="select-full" onchange="toggleScheduleExpr()">
+            <option value="daily">每天固定时间</option>
+            <option value="interval">固定间隔</option>
+            <option value="cron">自定义 Cron</option>
+            <option value="once">仅执行一次</option>
+          </select>
+        </div>
+        <div class="form-group" id="sched-daily-group">
+          <label>执行时间</label>
+          <input id="sched-time" type="time" value="08:30">
+        </div>
+        <div class="form-group">
+          <label>执行日</label>
+          <select id="sched-weekday" class="select-full">
+            <option value="all">每天</option>
+            <option value="workday">仅工作日（含调休补班）</option>
+            <option value="weekend">仅周末</option>
+            <option value="holiday">仅法定节假日</option>
+          </select>
+          <div class="hint">工作日模式自动处理调休和补班，周六补班也会执行</div>
+        </div>
+        <div class="form-group" id="sched-interval-group" style="display:none">
+          <label>间隔（分钟）</label>
+          <input id="sched-interval" type="number" value="60" min="1">
+        </div>
+        <div class="form-group" id="sched-cron-group" style="display:none">
+          <label>Cron 表达式</label>
+          <input id="sched-cron" type="text" placeholder="0 8 * * *">
+          <div class="hint">格式：分 时 日 月 周 — 例如 "0 8 * * *" = 每天早上8点</div>
+        </div>
+        <hr>
+        <div class="form-group">
+          <label>动作类型</label>
+          <select id="sched-action-type" class="select-full" onchange="toggleScheduleAction()">
+            <option value="group_command">组策略</option>
+            <option value="equipment">设备控制</option>
+            <option value="special_switch">切换专场</option>
+            <option value="custom_request">自定义请求</option>
+          </select>
+        </div>
+        <div id="sched-action-config">
+          <!-- 动态填充 -->
+        </div>
+        <div class="form-group">
+          <label>备注</label>
+          <input id="sched-desc" type="text" placeholder="可选">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveSchedule()">💾 保存</button>
+          <button class="btn" onclick="cancelScheduleEdit()">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 访客记忆中心 -->
+  <!-- ============================================================ -->
+  <div id="tab-visitors" class="tab-content">
+    <!-- 子标签 -->
+    <div class="toolbar visitor-subtabs" style="gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <button class="btn btn-sm btn-primary" data-sub="list" onclick="showVisitorSub('list')">👥 访客列表</button>
+      <button class="btn btn-sm" data-sub="register" onclick="showVisitorSub('register')">📷 人脸注册</button>
+      <button class="btn btn-sm" data-sub="welcome" onclick="showVisitorSub('welcome')">👋 欢迎配置</button>
+      <button class="btn btn-sm" data-sub="tags" onclick="showVisitorSub('tags')">🏷️ 标签管理</button>
+    </div>
+
+    <!-- 访客列表 -->
+    <div id="visitor-sub-list">
+      <div class="toolbar" style="margin-bottom:12px;">
+        <input id="visitor-search" type="text" placeholder="搜索姓名..." style="width:200px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);" onkeyup="if(event.key==='Enter')loadVisitors()">
+        <select id="visitor-category-filter" class="select-sm" onchange="loadVisitors()">
+          <option value="">全部分类</option>
+        </select>
+        <select id="visitor-tag-filter" class="select-sm" onchange="loadVisitors()">
+          <option value="">全部标签</option>
+        </select>
+        <button class="btn btn-sm" onclick="loadVisitors()">🔍 搜索</button>
+      </div>
+      <table class="log-table">
+        <thead><tr>
+          <th style="width:50px">头像</th><th>姓名</th><th>分类</th><th>标签</th>
+          <th>来访次数</th><th>最近来访</th><th>画像摘要</th><th>操作</th>
+        </tr></thead>
+        <tbody id="visitor-table-body"></tbody>
+      </table>
+      <div id="visitor-pagination" style="margin-top:8px;text-align:center;"></div>
+    </div>
+
+    <!-- 访客详情（默认隐藏） -->
+    <div id="visitor-sub-detail" style="display:none">
+      <button class="btn btn-sm" onclick="showVisitorSub('list')" style="margin-bottom:12px;">← 返回列表</button>
+      <div class="panel-grid" style="grid-template-columns:1fr 1fr;">
+        <!-- 基本信息 -->
+        <div class="panel">
+          <h3>基本信息</h3>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div id="visitor-detail-avatar" style="width:80px;height:80px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+              <span style="font-size:2rem;color:var(--text-muted);">👤</span>
+            </div>
+            <div style="flex:1;">
+              <div class="form-group">
+                <label>显示名</label>
+                <input id="vd-display-name" type="text" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;">
+              </div>
+              <div class="form-group">
+                <label>分类</label>
+                <select id="vd-category" class="select-full"></select>
+              </div>
+              <div class="form-group">
+                <label>状态</label>
+                <select id="vd-status" class="select-full">
+                  <option value="active">正常</option>
+                  <option value="inactive">停用</option>
+                  <option value="blocked">封禁</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px;">
+            <label>标签</label>
+            <div id="vd-tags-container" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <textarea id="vd-notes" rows="3" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;resize:vertical;"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveVisitorDetail()">💾 保存</button>
+          </div>
+          <div id="vd-save-result" class="result-box"></div>
+        </div>
+        <!-- 画像 & 统计 -->
+        <div class="panel">
+          <h3>画像摘要</h3>
+          <div id="vd-profile-summary" style="padding:12px;background:var(--bg);border-radius:var(--radius);min-height:60px;margin-bottom:12px;">-</div>
+          <h3>来访记录</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div class="stat-card"><div class="stat-value" id="vd-visit-count">0</div><div class="stat-label">来访次数</div></div>
+            <div class="stat-card"><div class="stat-value" id="vd-memory-count">0</div><div class="stat-label">问答记录</div></div>
+          </div>
+          <div><strong>首次来访:</strong> <span id="vd-first-seen">-</span></div>
+          <div><strong>最近来访:</strong> <span id="vd-last-seen">-</span></div>
+          <div><strong>最近机器人:</strong> <span id="vd-last-robot">-</span></div>
+          <div><strong>来源:</strong> <span id="vd-source">-</span></div>
+        </div>
+      </div>
+      <!-- 历史问答 -->
+      <div class="panel" style="margin-top:12px;">
+        <h3>历史问答</h3>
+        <table class="log-table">
+          <thead><tr><th>时间</th><th>问题</th><th>回答</th><th>意图</th><th>展项</th><th>级别</th></tr></thead>
+          <tbody id="vd-memories-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 人脸注册 -->
+    <div id="visitor-sub-register" style="display:none">
+      <div class="panel-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="panel">
+          <h3>发起人脸注册</h3>
+          <div class="form-group">
+            <label>姓名</label>
+            <input id="reg-name" type="text" placeholder="输入访客姓名" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;">
+          </div>
+          <div class="form-group">
+            <label>选择机器人</label>
+            <select id="reg-robot" class="select-full"></select>
+          </div>
+          <button class="btn btn-primary" onclick="doFaceRegister()">📷 开始注册</button>
+          <div id="reg-result" class="result-box"></div>
+        </div>
+        <div class="panel">
+          <h3>注册任务</h3>
+          <button class="btn btn-sm" onclick="loadRegisterTasks()" style="margin-bottom:8px;">🔄 刷新</button>
+          <table class="log-table">
+            <thead><tr><th>姓名</th><th>机器人</th><th>状态</th><th>时间</th><th>详情</th></tr></thead>
+            <tbody id="reg-tasks-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 欢迎配置 -->
+    <div id="visitor-sub-welcome" style="display:none">
+      <div class="panel" style="max-width:700px;">
+        <h3>自动欢迎配置</h3>
+        <div class="form-group">
+          <label>启用自动欢迎</label>
+          <select id="wc-enabled" class="select-full">
+            <option value="1">开启</option><option value="0">关闭</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>欢迎模式</label>
+          <select id="wc-mode" class="select-full">
+            <option value="any">有人即欢迎</option>
+            <option value="recognized">识别成功才欢迎</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>冷却时间(秒)</label>
+          <input id="wc-cooldown" type="number" value="300" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <div class="form-group">
+          <label>绑定有效期(秒)</label>
+          <input id="wc-binding-ttl" type="number" value="300" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <div class="form-group">
+          <label>识别锁定时长(秒)</label>
+          <input id="wc-lock-duration" type="number" value="60" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <div class="form-group">
+          <label>播报姓名</label>
+          <select id="wc-say-name" class="select-full">
+            <option value="1">是</option><option value="0">否</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>普通欢迎词</label>
+          <input id="wc-generic" type="text" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <div class="form-group">
+          <label>老访客欢迎词 (用 {name} 插入姓名)</label>
+          <input id="wc-returning" type="text" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <div class="form-group">
+          <label>VIP 欢迎词</label>
+          <input id="wc-vip" type="text" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;">
+        </div>
+        <button class="btn btn-primary" onclick="saveWelcomeConfig()">💾 保存</button>
+        <div id="wc-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- 标签管理 -->
+    <div id="visitor-sub-tags" style="display:none">
+      <div class="panel-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="panel">
+          <h3>访客分类</h3>
+          <div id="categories-list"></div>
+          <div style="margin-top:8px;display:flex;gap:4px;">
+            <input id="new-cat-name" placeholder="新分类名" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:4px;">
+            <input id="new-cat-color" type="color" value="#64748b" style="width:40px;">
+            <button class="btn btn-sm btn-primary" onclick="addCategory()">+ 添加</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>标签</h3>
+          <div id="tags-list"></div>
+          <div style="margin-top:8px;display:flex;gap:4px;">
+            <input id="new-tag-name" placeholder="新标签名" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:4px;">
+            <input id="new-tag-color" type="color" value="#94a3b8" style="width:40px;">
+            <button class="btn btn-sm btn-primary" onclick="addTag()">+ 添加</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 系统设置 -->
+  <!-- ============================================================ -->
+  <div id="tab-settings" class="tab-content">
+    <div class="toolbar">
+      <h3>⚙️ 系统设置</h3>
+      <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
+    </div>
+
+    <!-- 豹小秘 mini 基本配置 (从控制台迁来) — 横向紧凑 -->
+    <div class="card" style="margin-top:12px">
+      <h4>🐾 豹小秘 mini · 基本配置</h4>
+      <p class="hint" style="margin-top:-4px">修改后点"保存并下发"会自动推送到所有在线豹小秘。唤醒词"小豹小豹"已固定在硬件烧录值中，不可修改。</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-top:8px">
+        <div class="form-group" style="margin:0;min-width:180px;flex:1">
+          <label>🐾 机器人昵称</label>
+          <input id="cfg-robot-display-name" type="text" placeholder="如：小豹" style="width:100%">
+        </div>
+        <div class="form-group" style="margin:0;min-width:180px;flex:1">
+          <label>👤 数字人昵称</label>
+          <input id="cfg-digital-human-display-name" type="text" placeholder="如：艾琳" style="width:100%">
+        </div>
+        <div class="form-group" style="margin:0;min-width:120px">
+          <label>❤️ 心跳间隔 (s)</label>
+          <input id="cfg-heartbeat-interval" type="number" min="5" max="120" value="30" style="width:100%">
+        </div>
+        <div class="form-group" style="margin:0;min-width:120px">
+          <label>👂 收音超时 (s)</label>
+          <input id="cfg-listen-timeout" type="number" min="5" max="120" value="30" style="width:100%">
+        </div>
+        <div class="form-group" style="margin:0;min-width:130px">
+          <label>🌐 识别语言</label>
+          <select id="cfg-listen-language" style="width:100%">
+            <option value="zh">中文</option>
+            <option value="en">英文</option>
+            <option value="ja">日文</option>
+            <option value="ko">韩文</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="saveRobotConfig()" style="margin:0">💾 保存并下发</button>
+      </div>
+      <div id="cfg-robot-result" class="result-box" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>🤖 大模型 (LLM) 配置</h4>
+      <div class="hint" style="color:#888;font-size:12px;margin-bottom:8px">
+        全局大模型设置 — 用于意图识别 LLM 兜底、AI 讲解词生成、问答兜底等所有 LLM 调用。<br>
+        系统按 URL 路径自动识别协议: 含 <code>/messages</code> → Anthropic Messages 协议；其它 → OpenAI <code>/chat/completions</code> 兼容协议。
+      </div>
+      <div class="form-row">
+        <label>大模型总开关</label>
+        <select id="set-llm-enabled"><option value="0">关闭</option><option value="1">开启</option></select>
+      </div>
+      <div class="form-row">
+        <label>API 地址</label>
+        <input id="set-llm-url" type="text" style="width:480px"
+               placeholder="https://ark.cn-beijing.volces.com/api/coding/v1/messages" />
+      </div>
+      <div class="hint" style="color:#888;font-size:12px;margin:-4px 0 8px 0">
+        火山方舟 Anthropic 兼容: <code>https://ark.cn-beijing.volces.com/api/coding/v1/messages</code><br>
+        OpenAI 兼容 (Minimax/智谱等): <code>https://&lt;host&gt;/v1/chat/completions</code>
+      </div>
+      <div class="form-row">
+        <label>API Key</label>
+        <input id="set-llm-key" type="text" style="width:480px"
+               placeholder="ark-xxxxxxxx 或 sk-xxxxxxxx" />
+      </div>
+      <div class="form-row">
+        <label>模型</label>
+        <input id="set-llm-model" type="text" style="width:240px"
+               placeholder="ark-code-latest / doubao-pro-32k / minimax-m2.5" />
+      </div>
+      <div class="hint" style="color:#888;font-size:12px">
+        火山方舟 (Anthropic 协议) 常用: <code>ark-code-latest</code>；
+        OpenAI 协议常用: <code>minimax-m2.5</code>、<code>doubao-1-5-pro-32k-250115</code>。
+        改动即时生效, 无需重启。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>🧠 OpenClaw 决策桥</h4>
+      <div class="form-row">
+        <label>OpenClaw 接管</label>
+        <select id="set-openclaw-enabled"><option value="1">开启（走 OpenClaw 决策）</option><option value="0">关闭（走上方配置的大模型直连意图匹配）</option></select>
+      </div>
+      <div class="hint" style="color:#888;font-size:12px">关闭后所有问答走 V5 原链路（意图识别 + 上方 LLM 兜底），不经过 OpenClaw。yaml 里 openclaw.enabled 仍为总开关。</div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>🧭 智能参观规划 (Auto Plan)</h4>
+      <div class="form-row">
+        <label>自动规划</label>
+        <select id="set-auto-plan-enabled"><option value="1">开启</option><option value="0">关闭</option></select>
+      </div>
+      <div class="hint" style="color:#888;font-size:12px">
+        开启后, 用户说 "为我定制参观" / "20分钟智慧城市" / 老访客泛化参观时, 系统用 LLM 动态编排路线;
+        失败自动回落到静态 tour_scripts. 查看运行日志: <a href="/admin.html" target="_blank">运维面板</a>.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>📢 Webhook 告警</h4>
+      <div class="form-row">
+        <label>告警开关</label>
+        <select id="set-webhook-enabled"><option value="0">关闭</option><option value="1">开启</option></select>
+      </div>
+      <div class="form-row">
+        <label>Webhook 地址</label>
+        <input id="set-webhook-url" type="text" style="width:400px" placeholder="企微/钉钉/飞书 Webhook URL" />
+      </div>
+      <div class="form-row">
+        <label>告警事件</label>
+        <input id="set-webhook-events" type="text" style="width:400px" placeholder="robot_offline,robot_error,robot_low_battery" />
+      </div>
+      <button class="btn" onclick="testWebhook()" style="margin-top:8px">🔔 发送测试</button>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>🦾 宇树机器人 (HTTP 网关)</h4>
+      <div class="form-row">
+        <label>启用</label>
+        <select id="set-unitree-enabled"><option value="1">启用</option><option value="0">禁用</option></select>
+      </div>
+      <div class="form-row">
+        <label>网关地址</label>
+        <input id="set-unitree-base-url" type="text" style="width:400px" placeholder="http://192.168.23.253:8000" />
+      </div>
+      <div class="form-row">
+        <label>API Key</label>
+        <input id="set-unitree-api-key" type="text" style="width:200px" placeholder="123456" />
+      </div>
+      <div class="form-row">
+        <label>同步间隔（分钟）</label>
+        <input id="set-unitree-sync-interval" type="number" style="width:120px" min="5" placeholder="60" />
+        <span class="hint" style="margin-left:8px">动作库/舞蹈库/地图同步节奏</span>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm" onclick="testUnitreeHealth()">🩺 健康检查</button>
+        <button class="btn btn-sm btn-primary" onclick="triggerUnitreeSync()">🔄 立即同步动作/舞蹈/地图</button>
+      </div>
+      <div id="unitree-sync-result" class="hint" style="margin-top:6px"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 日志 (改版: 分类视图 + 时间窗 + 状态过滤 + 跨页搜索 + live tail) -->
+  <!-- ============================================================ -->
+  <div id="tab-logs" class="tab-content logs-page">
+    <!-- 顶部摘要栏: 当前窗口内 ok/warning/error/timeout 计数 -->
+    <div id="log-summary" class="log-summary"></div>
+
+    <!-- 分类 pills (4 类) -->
+    <div class="log-cats">
+      <button class="log-cat active" data-cat="all" onclick="setLogCategory('all')">📋 全部</button>
+      <button class="log-cat" data-cat="interact" onclick="setLogCategory('interact')">🗣️ 现场交互</button>
+      <button class="log-cat" data-cat="control"  onclick="setLogCategory('control')">🤖 设备控制</button>
+      <button class="log-cat" data-cat="ops"      onclick="setLogCategory('ops')">🔄 同步运维</button>
+      <button class="log-cat" data-cat="error"    onclick="setLogCategory('error')">🔴 异常</button>
+    </div>
+
+    <!-- 机器人筛选 pills (与分类正交相乘) -->
+    <div class="log-cats" style="margin-top:6px;">
+      <button class="log-bot active" data-bot="all" onclick="setLogBot('all')">🤝 不限机器人</button>
+      <button class="log-bot" data-bot="baoxiaomi" onclick="setLogBot('baoxiaomi')">🤖 豹小秘</button>
+      <button class="log-bot" data-bot="unitree"   onclick="setLogBot('unitree')">🐕 宇树</button>
+    </div>
+
+    <div class="toolbar">
+      <!-- 时间窗快选 -->
+      <div class="log-time-pick">
+        <button class="btn btn-sm log-time-btn active" data-min="60" onclick="setLogTime(60)">近 1h</button>
+        <button class="btn btn-sm log-time-btn" data-min="360" onclick="setLogTime(360)">近 6h</button>
+        <button class="btn btn-sm log-time-btn" data-min="1440" onclick="setLogTime(1440)">近 24h</button>
+        <button class="btn btn-sm log-time-btn" data-min="0" onclick="setLogTime(0)">全部</button>
+      </div>
+      <!-- 搜索 (跨页) -->
+      <input id="log-search" class="select-sm" type="text" placeholder="🔍 跨页搜索 (动作/来源/目标/详情)" oninput="window._logSearchTimer && clearTimeout(window._logSearchTimer); window._logSearchTimer = setTimeout(loadLogs, 350);" style="flex:1;min-width:240px;">
+      <label class="select-sm" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+        <input id="log-only-bad" type="checkbox" onchange="loadLogs()"> 只看异常
+      </label>
+      <label class="select-sm" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+        <input id="log-collapse-dup" type="checkbox" checked onchange="renderLogs()"> 折叠重复
+      </label>
+      <label class="select-sm" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+        <input id="log-live" type="checkbox" checked onchange="toggleLogLive()"> 🔴 实时(3s)
+      </label>
+      <button class="btn btn-sm" onclick="loadLogs()">🔄 刷新</button>
+    </div>
+
+    <table class="log-table log-table--rich">
+      <thead>
+        <tr>
+          <th style="width:30px;"></th>
+          <th style="width:148px;">时间</th>
+          <th style="width:130px;">类型</th>
+          <th style="width:110px;">来源 → 目标</th>
+          <th style="width:170px;">动作</th>
+          <th>详情</th>
+          <th style="width:80px;">状态</th>
+          <th style="width:60px;">耗时</th>
+        </tr>
+      </thead>
+      <tbody id="log-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Toast 通知 -->
+  <div id="toast-container"></div>
+</div>
+
+<script src="/static/js/app.js?v=20260526-music-delete-fix"></script>
+</body>
+</html>

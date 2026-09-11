@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 允许所有明文流量（HTTP） -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- 【关键修复】针对所有域名的HTTPS配置 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">soundhelix.com</domain>
+        <domain includeSubdomains="true">actions.google.com</domain>
+        <domain includeSubdomains="true">w3schools.com</domain>
+        <!-- 信任所有证书，包括自签名证书 -->
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

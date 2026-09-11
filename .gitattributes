@@ -1,0 +1,2 @@
+release-assets/*.apk filter=lfs diff=lfs merge=lfs -text
+release-assets/*.zip filter=lfs diff=lfs merge=lfs -text

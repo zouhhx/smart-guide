@@ -1,0 +1,5 @@
+# Copy to local.properties and set your own Android SDK directory.
+# Credentials belong in the device private file, never in this file.
+# sdk.dir=C:/Users/YOUR_USER/AppData/Local/Android/Sdk
+asr.mode=iflytek
+tts.mode=local

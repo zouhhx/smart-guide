@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="G10-C 展厅离线语音网关本地管理端">
+  <title>Voice Gateway · 本地控制台</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">VG</span>
+        <div>
+          <p class="eyebrow">G10-C · LOCAL VOICE CONTROL</p>
+          <h1>语音网关控制台</h1>
+        </div>
+      </div>
+      <div class="header-status">
+        <span id="headerStatusDot" class="status-dot offline"></span>
+        <div>
+          <span class="status-caption">语音链路</span>
+          <strong id="headerStatusText">正在连接…</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-card">
+      <div class="hero-copy">
+        <p class="section-kicker">本地 SenseVoice · 离线运行</p>
+        <h2 id="heroTitle">让语音网关准备就绪</h2>
+        <p id="heroDescription">
+          选择录音设备并确认参数，然后一键启动唤醒、断句和本地识别链路。
+        </p>
+        <div class="hero-actions">
+          <button id="primaryAction" class="button button-primary" type="button">
+            <span class="button-icon" aria-hidden="true">▶</span>
+            <span>一键启动</span>
+          </button>
+          <button id="refreshAll" class="button button-ghost" type="button">
+            刷新状态
+          </button>
+        </div>
+      </div>
+      <div class="hero-state">
+        <div class="state-orbit">
+          <div class="state-core">
+            <span id="pipelineState">IDLE</span>
+            <small>PIPELINE</small>
+          </div>
+        </div>
+        <dl class="quick-stats">
+          <div>
+            <dt>运行时间</dt>
+            <dd id="uptime">00:00:00</dd>
+          </div>
+          <div>
+            <dt>本地进程</dt>
+            <dd id="processId">—</dd>
+          </div>
+          <div>
+            <dt>当前 ASR</dt>
+            <dd>SenseVoice</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel panel-wide">
+        <div class="panel-heading">
+          <div>
+            <span class="step-tag">01</span>
+            <h3>录音设备</h3>
+            <p>选择语音网关实际使用的 Windows 输入设备</p>
+          </div>
+          <button id="refreshDevices" class="text-button" type="button">重新扫描</button>
+        </div>
+
+        <label class="field-label" for="deviceSelect">当前录音设备</label>
+        <div class="select-wrap">
+          <select id="deviceSelect">
+            <option value="">正在读取设备…</option>
+          </select>
+          <span class="select-arrow" aria-hidden="true">⌄</span>
+        </div>
+        <div id="deviceMeta" class="device-meta">
+          <span>等待设备信息</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="audio-control-grid">
+          <div class="volume-control-pane">
+            <div class="control-heading">
+              <div>
+                <h4>Windows 系统输入音量</h4>
+                <p>修改录音端点的系统软件层音量，不是数字增益</p>
+              </div>
+              <output id="volumeValue" class="value-pill">—</output>
+            </div>
+            <input id="volumeSlider" class="range volume-range" type="range"
+                   min="0" max="100" step="1" value="50" disabled>
+            <div class="range-labels">
+              <span>静音</span><span>建议 40–70</span><span>100</span>
+            </div>
+            <p id="volumeMessage" class="field-message">选择设备后读取系统音量</p>
+          </div>
+
+          <section class="input-meter-card" aria-labelledby="inputMeterTitle">
+            <div class="input-meter-copy">
+              <h4 id="inputMeterTitle">麦克风输入电平</h4>
+              <p>实时显示当前录音端点的峰值</p>
+              <output id="inputMeterValue">−∞ dBFS</output>
+              <p id="inputMeterStatus" class="field-message">正在连接检测端点</p>
+            </div>
+            <div id="inputMeter" class="input-meter"
+                 role="meter" aria-label="麦克风实时输入电平"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="inputMeterFill" class="input-meter-fill"></div>
+              <span id="inputMeterPeak" class="input-meter-peak"></span>
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <article id="triggerPanel" class="panel">
+        <div class="panel-heading compact">
+          <div>
+            <span class="step-tag">02</span>
+            <h3>触发方式</h3>
+            <p>选择唤醒词或免唤醒的分贝触发</p>
+          </div>
+        </div>
+        <label class="field-label" for="activationMode">当前触发模式</label>
+        <div class="select-wrap">
+          <select id="activationMode">
+            <option value="kws">唤醒词模式（推荐）</option>
+            <option value="level">分贝触发模式（免唤醒）</option>
+          </select>
+          <span class="select-arrow" aria-hidden="true">⌄</span>
+        </div>
+        <p id="activationModeHint" class="field-message">
+          识别到唤醒词后才开始听取问题，误触发风险最低。
+        </p>
+
+        <div id="levelTriggerControls" class="level-trigger-controls" hidden>
+          <div class="slider-control">
+            <label for="levelThreshold">声音触发阈值</label>
+            <output id="levelThresholdValue">-35 dBFS</output>
+            <input id="levelThreshold" class="range" type="range"
+                   min="-60" max="-15" step="1" value="-35">
+          </div>
+          <div class="level-threshold-row">
+            <label for="levelThresholdNumber">精确值</label>
+            <input id="levelThresholdNumber" class="number-input" type="number"
+                   min="-60" max="-15" step="1" value="-35">
+            <button id="applyLevelThreshold" class="button button-ghost button-compact"
+                    type="button">立即应用阈值</button>
+          </div>
+          <p id="levelTriggerComparison" class="field-message">
+            当前输入：等待检测 / 触发阈值：-35 dBFS
+          </p>
+          <p class="field-message warning-copy">
+            数值越低越灵敏。建议从 -35 dBFS 开始，根据现场环境逐步调整。
+          </p>
+        </div>
+
+        <div class="divider"></div>
+        <div id="kwsSettings" class="mode-dependent-settings">
+        <label class="field-label" for="keywordInput">唤醒短语</label>
+        <input id="keywordInput" class="text-input" type="text"
+               minlength="2" maxlength="10" autocomplete="off"
+               placeholder="例如：你好思德">
+        <p class="field-message">仅支持2–10个汉字，保存时自动校验拼音token</p>
+
+        <div class="preset-row" aria-label="KWS灵敏度预设">
+          <button class="preset" type="button" data-kws-preset="stable">低误唤醒</button>
+          <button class="preset active" type="button" data-kws-preset="balanced">平衡</button>
+          <button class="preset" type="button" data-kws-preset="sensitive">高灵敏度</button>
+        </div>
+
+        <div class="slider-control">
+          <label for="kwsScore">KWS score</label>
+          <output id="kwsScoreValue">1.50</output>
+          <input id="kwsScore" class="range" type="range"
+                 min="0.5" max="4" step="0.05" value="1.5">
+        </div>
+        <div class="slider-control">
+          <label for="kwsThreshold">KWS threshold</label>
+          <output id="kwsThresholdValue">0.25</output>
+          <input id="kwsThreshold" class="range" type="range"
+                 min="0.1" max="0.6" step="0.01" value="0.25">
+        </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading compact">
+          <div>
+            <span class="step-tag">03</span>
+            <h3>VAD 断句</h3>
+            <p>控制讲话检测和结束等待</p>
+          </div>
+        </div>
+
+        <div class="preset-row" aria-label="VAD断句预设">
+          <button class="preset" type="button" data-vad-preset="fast">响应优先</button>
+          <button class="preset active" type="button" data-vad-preset="balanced">平衡</button>
+          <button class="preset" type="button" data-vad-preset="complete">完整优先</button>
+        </div>
+
+        <div class="slider-control">
+          <label for="vadSilence">结束静音</label>
+          <output id="vadSilenceValue">0.60 s</output>
+          <input id="vadSilence" class="range" type="range"
+                 min="0.2" max="2" step="0.05" value="0.6">
+        </div>
+      </article>
+
+      <article class="panel panel-wide settings-footer">
+        <div>
+          <span class="step-tag">04</span>
+          <h3>应用配置</h3>
+          <p>配置校验并保存成功后，运行中的语音服务会自动重启并立即加载新设置。</p>
+        </div>
+        <div class="settings-actions">
+          <button id="restoreDefaults" class="button button-danger-ghost" type="button">
+            恢复默认
+          </button>
+          <button id="saveConfig" class="button button-secondary" type="button">
+            保存并应用
+          </button>
+        </div>
+      </article>
+
+      <article class="panel panel-wide live-card">
+        <div class="panel-heading">
+          <div>
+            <span class="step-tag">05</span>
+            <h3>最近识别</h3>
+            <p>先确认唤醒和聆听状态，再查看本地最终识别结果</p>
+          </div>
+          <span id="asrStatusBadge" class="soft-badge">等待语音</span>
+        </div>
+        <div id="kwsListeningIndicator"
+             class="listening-indicator is-idle"
+             role="status"
+             aria-live="polite"
+             aria-atomic="true">
+          <div class="listening-visual" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="listening-copy">
+            <span id="listeningKicker" class="listening-kicker">KWS / VAD 状态</span>
+            <strong id="kwsListeningTitle">等待唤醒</strong>
+            <span id="kwsListeningHint">请先启动语音服务</span>
+          </div>
+          <span id="kwsListeningBadge" class="listening-badge">待机</span>
+        </div>
+        <blockquote id="lastAsrText">尚无识别结果</blockquote>
+        <div class="result-meta">
+          <span><span id="lastActivationLabel">唤醒词</span> <strong id="lastWake">—</strong></span>
+          <span>语言 <strong id="lastLanguage">—</strong></span>
+          <span>ASR耗时 <strong id="lastAsrDuration">—</strong></span>
+          <span>语音长度 <strong id="lastSpeechDuration">—</strong></span>
+        </div>
+      </article>
+
+      <article class="panel panel-wide live-card model-answer-card">
+        <div class="panel-heading">
+          <div>
+            <span class="step-tag">06</span>
+            <h3>模型回答</h3>
+            <p>局域网问答服务返回的现场演示回答</p>
+          </div>
+          <span id="modelStatusBadge" class="soft-badge">等待提问</span>
+        </div>
+        <blockquote id="modelAnswer">尚无回答</blockquote>
+        <div class="result-meta">
+          <span>目标 <strong id="modelTarget">2</strong></span>
+          <span>序号 <strong id="modelSeq">—</strong></span>
+          <span>接口耗时 <strong id="modelDuration">—</strong></span>
+        </div>
+      </article>
+
+      <article class="panel panel-full log-card">
+        <div class="panel-heading">
+          <div>
+            <span class="step-tag">07</span>
+            <h3>运行日志</h3>
+            <p>仅展示当前唤醒词、ASR识别结果和模型回答</p>
+          </div>
+          <div class="log-actions">
+            <label class="toggle-label">
+              <input id="autoScroll" type="checkbox" checked>
+              <span>自动滚动</span>
+            </label>
+            <button id="refreshLogs" class="text-button" type="button">刷新</button>
+          </div>
+        </div>
+        <pre id="logOutput" aria-live="polite">正在读取日志…</pre>
+      </article>
+    </section>
+
+    <footer>
+      <span>Voice Gateway Web Manager <strong id="appVersion">—</strong></span>
+      <span>局域网访问已开启 · TCP 8765 · 50ms实时刷新</span>
+    </footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

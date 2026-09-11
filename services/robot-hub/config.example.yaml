@@ -1,0 +1,124 @@
+# 展厅流程中枢系统 v5.0 配置文件
+
+server:
+  host: "0.0.0.0"
+  http_port: 8000
+  tcp_port: 19888
+
+database:
+  path: "data/exhibition_hub.db"
+
+# 水滴云平台 (展馆数据同步)
+waterdrop:
+  base_url: "http://192.168.18.65:8866"
+  account: "ZhanGuan"
+  password: ""
+  hall_id: 5
+  default_special_id: 68    # 首次启动默认专场（后续由TCP update_{id} 更新）
+  sync_interval_minutes: 5
+
+# 中控服务器 (TCP短连接)
+central_control:
+  host: "192.168.16.18"
+  port: 8989
+  command_interval_seconds: 2
+  retry_count: 3
+
+# OrionStar 云端 API (点位同步)
+orionstar:
+  base_url: "https://openapi.orionstar.com"
+  appid: "ori-6893a1766d015e4b6236abc15a24"
+  secret: ""
+  grant_type: "client_credential"
+  robot_sn: "MC1BCN2K100262058CA0"
+  sync_interval_minutes: 30
+
+# 大模型 (意图理解)
+llm:
+  base_url: "https://zhenze-huhehaote.cmecloud.cn/v1/chat/completions"
+  api_key: ""
+  model: "minimax-m2.5"
+  timeout_seconds: 15
+
+# OpenClaw 决策桥 (远端 WS 网关 + 专属 agent "展厅豹小秘")
+# 命中 handoff 白名单的 qtype (hall_context/hall_knowledge/general_knowledge/realtime_info)
+# 先交给 OpenClaw 决策; 失败/超时/格式错全部自动回退到 V5 原 retriever。
+# 运营层开关: 把 system_config.openclaw_enabled 设成 "0" 即可一键回落到旧 LLM 路径。
+openclaw:
+  enabled: true
+  ws_url: "ws://192.168.16.61:18789"
+  token: ""
+  model: "exhibition"               # 网关上的 agent slug (2026-05-22 新网关 slug 改短)
+  timeout_seconds: 25                # warm ~5s, cold ~15s; 25s 留够冷启动余量, 避免第一发吃 timeout 走 fallback
+
+# 新系统 InputGateway 问答接入。正式参数和 Token 由服务器环境文件提供。
+# active 时优先于 legacy_qa，失败后不逐请求回退老系统。
+gateway_qa:
+  mode: "off"
+  base_url: "http://192.168.22.231:8780"
+  bearer_token_env: "V5_GATEWAY_CLIENT_TOKEN"
+  tenant_id: ""
+  site_id: ""
+  knowledge_base_id: ""
+  locale: "zh-CN"
+  web_enabled: false
+  request_timeout_seconds: 18
+  max_attempts: 2
+  result_cache_capacity: 512
+  result_cache_ttl_seconds: 1800
+  target_screen_id: ""
+  default_current_unit_id: ""
+  target_screen_by_robot: {}
+  default_current_unit_by_robot: {}
+
+# 老系统问答入口。active 时仅普通问答走此接口；控制、导航和浏览仍在 V5。
+legacy_qa:
+  robot_contract_enabled: false  # 61确认新字段和请求级静音后再开启
+  mode: "active"  # off 可整体恢复原 V5 问答链路
+  endpoint: "http://192.168.16.61:3001/api/asr-text"
+  target: "2"
+  source: "microphone"
+  timeout_seconds: 18
+
+# 老系统明确拒答后的工作人员教学。61 主机契约验收前必须保持关闭。
+legacy_teaching:
+  enabled: false
+  allowed_robot_ids: []
+  protocol_version: 2
+  analyze_endpoint: "http://192.168.16.61:3001/api/knowledge/teaching/analyze"
+  analyze_bearer_token_env: "V5_LEGACY_TEACHING_ANALYZE_TOKEN"
+  silence_timeout_seconds: 10
+  analysis_min_interval_seconds: 3
+  analysis_timeout_seconds: 5
+  final_analysis_timeout_seconds: 5
+  replay_wait_seconds: 2
+  memory_ttl_seconds: 600
+  draft_endpoint: "http://192.168.16.61:3001/api/knowledge/qa-drafts"
+  bearer_token_env: "V5_LEGACY_QA_DRAFT_TOKEN"
+  session_timeout_seconds: 120
+  request_timeout_seconds: 10
+  max_attempts: 2
+  max_fragments: 50
+  max_answer_chars: 4000
+
+# 宇树机器人 HTTP 网关 (独立于豹小秘 mini WebSocket)
+# 运行期的 base_url / api_key / 同步间隔都在 system_config 表里, 管理后台可改。
+# 首次部署默认值:
+#   unitree_base_url=http://192.168.23.253:8000
+#   unitree_api_key=
+#   unitree_sync_interval_min=60
+
+# 机器人配置 (豹小秘 mini)
+# 注意: 唤醒词已固定为"小豹小豹"（硬件侧唤醒模型烧录值），不再走配置文件。
+robot:
+  heartbeat_interval: 30
+  listen_timeout: 30
+  listen_language: "zh"
+  heartbeat_miss_limit: 3
+
+# 日志
+logging:
+  level: "INFO"
+  file: "logs/hub.log"
+  max_size_mb: 50
+  backup_count: 5

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "seq": 3,
+  "reply": "",
+  "actions": [],
+  "target": "2",
+  "fallback": {
+    "id": "4698ccc1-6578-432e-be06-256f735e203c",
+    "name": "价格与商务咨询",
+    "score": 63,
+    "matchedKeywords": [
+      "报价"
+    ]
+  },
+  "answerStatus": "ABSTAINED",
+  "reason": "STAFF_ONLY",
+  "teachable": false,
+  "answerSource": "兜底库",
+  "traceId": "3"
+}

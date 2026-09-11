@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "展厅小手机接口 v1.0（2026-09-09）",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "依据 61 现行源码核对。先获取屏幕列表并设置 target。除第一项外会操作现场屏幕，不要整组自动运行。语音请求需手机自行完成 ASR。"
+  },
+  "variable": [
+    {
+      "value": "http://192.168.16.61:3001",
+      "key": "baseUrl",
+      "type": "string"
+    },
+    {
+      "value": "2",
+      "key": "target",
+      "type": "string"
+    },
+    {
+      "value": "hall-phone-postman-demo-01",
+      "key": "source",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 获取屏幕列表（只读）",
+      "request": {
+        "url": "{{baseUrl}}/api/screens",
+        "method": "GET",
+        "description": "先执行本项，根据 screens[].screenNumber 选择 target。选屏只保存在 App 本地。",
+        "header": []
+      }
+    },
+    {
+      "name": "02 左滑（PPT下一页／列表上一个）",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"gesture_swipe_left\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "03 右滑（PPT上一页／列表下一个）",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"gesture_swipe_right\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "04 双击（PPT讲解／列表打开）",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"gesture_double_tap\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "05 上滑返回主页",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"gesture_swipe_up\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "06 三击显示当前专场文件",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"gesture_triple_tap\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "07 固定按钮：PPT下一页",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"ppt_next\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "08 固定按钮：PPT上一页",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"ppt_prev\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "09 固定按钮：当前页讲解",
+      "request": {
+        "url": "{{baseUrl}}/api/remote-control",
+        "method": "POST",
+        "description": "会控制现场所选屏幕，请单项手动执行。HTTP 200 不代表执行完成；不要自动重试。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"action\": \"ppt_speak_commentary\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "10 语音识别完成：查找PPT",
+      "request": {
+        "url": "{{baseUrl}}/api/asr-text",
+        "method": "POST",
+        "description": "只传最终识别文字。打开第一个要求同一屏已经有文件结果。不要再次执行响应中的 actions。requestId 仅追踪，不保证幂等。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"text\": \"查找九天人工智能的PPT\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\",\r\n  \"requestId\": \"{{$guid}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "11 语音识别完成：打开第一个",
+      "request": {
+        "url": "{{baseUrl}}/api/asr-text",
+        "method": "POST",
+        "description": "只传最终识别文字。打开第一个要求同一屏已经有文件结果。不要再次执行响应中的 actions。requestId 仅追踪，不保证幂等。",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=utf-8"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"text\": \"打开第一个\",\r\n  \"target\": \"{{target}}\",\r\n  \"source\": \"{{source}}\",\r\n  \"requestId\": \"{{$guid}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

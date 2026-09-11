@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>展厅人脸库管理</title>
+  <style>
+    :root {
+      --navy: #0b1f33;
+      --navy-2: #123450;
+      --blue: #1976d2;
+      --blue-soft: #e8f2fc;
+      --green: #16855b;
+      --red: #c0392b;
+      --ink: #172738;
+      --muted: #657789;
+      --line: #dce5ec;
+      --surface: #ffffff;
+      --page: #f3f6f8;
+      --shadow: 0 10px 28px rgba(25, 50, 75, .08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; color: var(--ink); background: var(--page); }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; color: #fff; background: linear-gradient(120deg, var(--navy), var(--navy-2)); box-shadow: 0 2px 16px rgba(4, 24, 40, .18); }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 12px; background: rgba(255,255,255,.1); font-size: 21px; }
+    .brand h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .03em; }
+    .brand p { margin: 3px 0 0; font-size: 12px; color: #b9ccdc; }
+    .service-state { display: flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 999px; background: rgba(255,255,255,.1); font-size: 13px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa9b4; box-shadow: 0 0 0 4px rgba(255,255,255,.08); }
+    .dot.online { background: #3bd391; }
+    .dot.offline { background: #ff786b; }
+    main { width: min(1320px, calc(100% - 40px)); margin: 24px auto 50px; }
+    .summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+    .stat { min-height: 104px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    .stat-label { color: var(--muted); font-size: 13px; }
+    .stat-value { margin-top: 9px; font-size: 28px; line-height: 1; font-weight: 750; color: var(--navy); }
+    .stat-note { margin-top: 8px; color: #8493a0; font-size: 12px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+    .toolbar { min-height: 70px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); }
+    .search { position: relative; flex: 1; max-width: 420px; }
+    .search input { width: 100%; height: 42px; padding: 0 14px 0 40px; border: 1px solid var(--line); border-radius: 9px; outline: none; background: #fafcfd; }
+    .search input:focus { border-color: #7db3e5; box-shadow: 0 0 0 3px var(--blue-soft); }
+    .search::before { content: "⌕"; position: absolute; left: 14px; top: 7px; color: #73889a; font-size: 22px; }
+    .toolbar-spacer { flex: 1; }
+    .btn { height: 42px; padding: 0 17px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: #fff; font-weight: 650; }
+    .btn:hover { background: #f6f9fb; }
+    .btn-primary { border-color: var(--blue); color: #fff; background: var(--blue); }
+    .btn-primary:hover { background: #1266b8; }
+    .btn-danger { border-color: #f1c4bf; color: var(--red); background: #fff8f7; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { height: 46px; padding: 0 16px; text-align: left; background: #f8fafb; color: #607487; font-size: 12px; font-weight: 650; white-space: nowrap; }
+    td { padding: 14px 16px; border-top: 1px solid #edf1f4; font-size: 13px; vertical-align: middle; }
+    tbody tr:hover { background: #fbfdff; }
+    .identity { display: flex; align-items: center; gap: 12px; min-width: 180px; }
+    .avatar { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border-radius: 12px; background: linear-gradient(145deg, #dceeff, #edf6ff); color: #1466ab; font-weight: 750; }
+    .identity-name { font-weight: 700; color: var(--ink); }
+    .identity-id { margin-top: 3px; color: #8b99a6; font-size: 11px; }
+    .tag { display: inline-flex; align-items: center; height: 25px; padding: 0 9px; border-radius: 999px; color: #326789; background: #edf6fb; font-size: 12px; white-space: nowrap; }
+    .tag.enabled { color: var(--green); background: #eaf7f1; }
+    .muted { max-width: 280px; color: var(--muted); line-height: 1.5; }
+    .actions { display: flex; gap: 8px; white-space: nowrap; }
+    .link-btn { padding: 5px 8px; border: 0; color: var(--blue); background: transparent; font-size: 13px; }
+    .link-btn.danger { color: var(--red); }
+    .empty { padding: 70px 20px; text-align: center; color: var(--muted); }
+    .empty-icon { margin-bottom: 10px; font-size: 42px; opacity: .65; }
+    .overlay { position: fixed; inset: 0; z-index: 20; display: none; background: rgba(5, 18, 30, .48); backdrop-filter: blur(2px); }
+    .overlay.open { display: block; }
+    .drawer { position: absolute; top: 0; right: 0; width: min(560px, 100%); height: 100%; display: flex; flex-direction: column; background: #fff; box-shadow: -18px 0 48px rgba(7, 25, 42, .18); animation: slide .2s ease-out; }
+    @keyframes slide { from { transform: translateX(30px); opacity: .6; } }
+    .drawer-head { height: 70px; flex: 0 0 70px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .drawer-head h2 { margin: 0; font-size: 18px; }
+    .close { width: 36px; height: 36px; border: 0; border-radius: 8px; background: #f2f5f7; color: #607487; font-size: 22px; }
+    .drawer-body { flex: 1; padding: 22px 24px; overflow-y: auto; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 16px; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 650; color: #42586a; }
+    .required::after { content: " *"; color: var(--red); }
+    input, textarea { width: 100%; border: 1px solid var(--line); border-radius: 9px; outline: none; color: var(--ink); background: #fff; }
+    input { height: 43px; padding: 0 12px; }
+    textarea { min-height: 78px; padding: 10px 12px; resize: vertical; line-height: 1.55; }
+    input:focus, textarea:focus { border-color: #72aae0; box-shadow: 0 0 0 3px var(--blue-soft); }
+    input:disabled { color: #748493; background: #f3f6f8; }
+    .help { margin-top: 6px; color: #8a99a6; font-size: 11px; line-height: 1.5; }
+    .drop { min-height: 132px; padding: 20px; display: grid; place-items: center; text-align: center; border: 1.5px dashed #9eb9ce; border-radius: 11px; color: #5d7588; background: #f8fbfd; transition: .15s; }
+    .drop.drag { border-color: var(--blue); background: var(--blue-soft); }
+    .drop strong { color: var(--blue); }
+    .drop input { display: none; }
+    .library-actions { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .capture-library { margin-bottom: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #f8fafb; }
+    .capture-library-head { margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .capture-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; max-height: 340px; overflow-y: auto; }
+    .capture-card { position: relative; padding: 0; overflow: hidden; text-align: left; border: 2px solid transparent; border-radius: 9px; background: #fff; box-shadow: 0 1px 5px rgba(15, 42, 64, .12); }
+    .capture-card:hover { border-color: var(--blue); }
+    .capture-card img { width: 100%; aspect-ratio: 4 / 3; display: block; object-fit: cover; background: #e8edf1; }
+    .capture-meta { padding: 7px 8px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .capture-meta strong { display: block; color: var(--ink); font-size: 11px; }
+    .capture-face-ok { color: var(--green); }
+    .capture-face-bad { color: var(--red); }
+    .previews { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .preview { position: relative; aspect-ratio: 1; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: #eef2f5; }
+    .preview img { width: 100%; height: 100%; object-fit: cover; }
+    .preview button { position: absolute; top: 4px; right: 4px; width: 23px; height: 23px; padding: 0; border: 0; border-radius: 50%; color: #fff; background: rgba(17,31,45,.72); }
+    .drawer-foot { min-height: 72px; padding: 14px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; border-top: 1px solid var(--line); background: #fbfcfd; }
+    .progress { display: none; flex: 1; color: var(--muted); font-size: 12px; }
+    .progress.show { display: block; }
+    .toast { position: fixed; left: 50%; bottom: 32px; z-index: 40; max-width: min(520px, calc(100% - 32px)); padding: 12px 18px; transform: translate(-50%, 20px); border-radius: 9px; color: #fff; background: #183148; box-shadow: 0 10px 30px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: .2s; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .toast.error { background: #a93226; }
+    @media (max-width: 760px) {
+      .topbar { height: auto; min-height: 68px; padding: 12px 18px; }
+      .brand p { display: none; }
+      main { width: calc(100% - 20px); margin-top: 12px; }
+      .summary { grid-template-columns: 1fr; gap: 9px; }
+      .stat { min-height: 82px; padding: 15px 17px; }
+      .stat-value { font-size: 23px; }
+      .toolbar { flex-wrap: wrap; }
+      .search { flex-basis: 100%; max-width: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">◉</div>
+      <div><h1>展厅人脸库管理</h1><p>人员资料、识别照片与展厅联动配置</p></div>
+    </div>
+    <div class="service-state"><span id="serviceDot" class="dot"></span><span id="serviceText">正在检查服务</span></div>
+  </header>
+
+  <main>
+    <section class="summary">
+      <article class="stat"><div class="stat-label">已录入人员</div><div id="personCount" class="stat-value">—</div><div class="stat-note">当前启用的人脸身份</div></article>
+      <article class="stat"><div class="stat-label">人脸特征</div><div id="faceCount" class="stat-value">—</div><div class="stat-note">每人建议录入3至5张</div></article>
+      <article class="stat"><div class="stat-label">识别模型</div><div id="modelState" class="stat-value" style="font-size:20px">检查中</div><div id="modelNote" class="stat-note">YuNet + SFace</div></article>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <div class="search"><input id="searchInput" placeholder="搜索姓名、编号、专场"></div>
+        <div class="toolbar-spacer"></div>
+        <button id="refreshButton" class="btn">刷新</button>
+        <button id="addButton" class="btn btn-primary">＋ 新增人员</button>
+      </div>
+      <div id="content"><div class="empty"><div class="empty-icon">◎</div>正在加载人员库…</div></div>
+    </section>
+  </main>
+
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <section class="drawer" role="dialog" aria-modal="true">
+      <div class="drawer-head"><h2 id="drawerTitle">新增人员</h2><button id="closeButton" class="close" aria-label="关闭">×</button></div>
+      <div class="drawer-body">
+        <div class="form-grid">
+          <div class="field"><label class="required" for="personId">人员编号</label><input id="personId" maxlength="80" placeholder="例如 vip-001"><div class="help">创建后不能修改，用于接口和日志关联。</div></div>
+          <div class="field"><label class="required" for="personName">姓名</label><input id="personName" maxlength="100" placeholder="例如 张先生"></div>
+          <div class="field"><label for="targetScreen">目标屏幕</label><input id="targetScreen" list="screenOptions" maxlength="20" placeholder="1 或 all"><datalist id="screenOptions"></datalist></div>
+          <div class="field"><label for="specialName">关联专场</label><input id="specialName" list="specialOptions" maxlength="100" placeholder="可留空"><datalist id="specialOptions"></datalist></div>
+          <div class="field full"><label for="welcomeText">欢迎语</label><textarea id="welcomeText" maxlength="300" placeholder="留空时自动使用：欢迎某某莅临参观。"></textarea></div>
+          <div class="field full">
+            <label id="photoLabel" class="required">识别照片</label>
+            <div class="library-actions"><button id="captureLibraryButton" class="btn" type="button">从61图片库选择</button><span class="help">平板“拍照取样”上传的照片会显示在这里</span></div>
+            <div id="captureLibrary" class="capture-library" hidden>
+              <div class="capture-library-head"><span id="captureLibraryStatus">正在读取图片库…</span><button id="captureRefreshButton" class="link-btn" type="button">刷新</button></div>
+              <div id="captureGrid" class="capture-grid"></div>
+            </div>
+            <div id="dropZone" class="drop">
+              <div><div style="font-size:28px;margin-bottom:7px">▣</div><strong>点击选择</strong>或将照片拖到这里<br><span class="help">支持 JPG、PNG，可一次选择多张</span></div>
+              <input id="photoInput" type="file" accept="image/jpeg,image/png" multiple>
+            </div>
+            <div id="previews" class="previews"></div>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-foot">
+        <div id="progress" class="progress"></div>
+        <button id="cancelButton" class="btn">取消</button>
+        <button id="saveButton" class="btn btn-primary">保存人员</button>
+      </div>
+    </section>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const state = { persons: [], files: [], captures: [], editing: null, busy: false };
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, { cache: 'no-store', ...options });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) throw new Error(data.detail || data.error || `请求失败 HTTP ${response.status}`);
+      return data;
+    }
+
+    function toast(message, error = false) {
+      const node = $('toast');
+      node.textContent = message;
+      node.className = `toast show${error ? ' error' : ''}`;
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => node.className = 'toast', 2800);
+    }
+
+    async function loadAll() {
+      try {
+        const [health, people] = await Promise.all([api('/api/face/health'), api('/api/face/persons')]);
+        state.persons = people.persons || [];
+        $('personCount').textContent = state.persons.length;
+        $('faceCount').textContent = state.persons.reduce((sum, item) => sum + Number(item.faceCount || 0), 0);
+        $('modelState').textContent = health.modelReady ? '运行正常' : '未就绪';
+        $('modelState').style.color = health.modelReady ? 'var(--green)' : 'var(--red)';
+        $('modelNote').textContent = health.modelReady ? `阈值 ${health.matchThreshold} · 人员库已连接` : (health.modelError || '请检查3030服务');
+        $('serviceDot').className = `dot ${health.modelReady ? 'online' : 'offline'}`;
+        $('serviceText').textContent = health.modelReady ? '识别服务在线' : '模型未就绪';
+        render();
+      } catch (error) {
+        $('serviceDot').className = 'dot offline';
+        $('serviceText').textContent = '识别服务离线';
+        $('modelState').textContent = '连接失败';
+        $('modelState').style.color = 'var(--red)';
+        $('content').innerHTML = `<div class="empty"><div class="empty-icon">!</div>${escapeHtml(error.message)}<br><button class="btn" style="margin-top:15px" onclick="loadAll()">重新连接</button></div>`;
+      }
+    }
+
+    function render() {
+      const query = $('searchInput').value.trim().toLowerCase();
+      const rows = state.persons.filter(item => [item.name, item.personId, item.specialName, item.welcomeText].join(' ').toLowerCase().includes(query));
+      if (!rows.length) {
+        $('content').innerHTML = `<div class="empty"><div class="empty-icon">◎</div>${query ? '没有符合条件的人员' : '人脸库暂无人员，请点击“新增人员”开始录入'}</div>`;
+        return;
+      }
+      $('content').innerHTML = `<div class="table-wrap"><table><thead><tr><th>人员</th><th>照片</th><th>目标屏幕</th><th>关联专场</th><th>欢迎语</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map(item => `
+        <tr>
+          <td><div class="identity"><div class="avatar">${escapeHtml((item.name || '?').slice(0, 1))}</div><div><div class="identity-name">${escapeHtml(item.name)}</div><div class="identity-id">${escapeHtml(item.personId)}</div></div></div></td>
+          <td><span class="tag">${Number(item.faceCount || 0)} 张</span></td>
+          <td>${escapeHtml(item.targetScreen || 'all')}</td>
+          <td>${item.specialName ? `<span class="tag">${escapeHtml(item.specialName)}</span>` : '<span class="muted">未关联</span>'}</td>
+          <td><div class="muted">${escapeHtml(item.welcomeText || `欢迎${item.name}莅临参观。`)}</div></td>
+          <td><span class="tag ${item.enabled ? 'enabled' : ''}">${item.enabled ? '启用' : '停用'}</span></td>
+          <td><div class="actions"><button class="link-btn" onclick="openEdit('${encodeURIComponent(item.personId)}')">编辑/加照片</button><button class="link-btn danger" onclick="removePerson('${encodeURIComponent(item.personId)}')">删除</button></div></td>
+        </tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function openCreate() {
+      state.editing = null;
+      state.files = [];
+      $('drawerTitle').textContent = '新增人员';
+      $('personId').disabled = false;
+      $('personId').value = '';
+      $('personName').value = '';
+      $('targetScreen').value = 'all';
+      $('specialName').value = '';
+      $('welcomeText').value = '';
+      $('photoLabel').classList.add('required');
+      $('captureLibrary').hidden = true;
+      renderPreviews();
+      openDrawer();
+    }
+
+    function openEdit(encodedId) {
+      const id = decodeURIComponent(encodedId);
+      const item = state.persons.find(person => person.personId === id);
+      if (!item) return;
+      state.editing = item;
+      state.files = [];
+      $('drawerTitle').textContent = '编辑人员';
+      $('personId').disabled = true;
+      $('personId').value = item.personId;
+      $('personName').value = item.name;
+      $('targetScreen').value = item.targetScreen || 'all';
+      $('specialName').value = item.specialName || '';
+      $('welcomeText').value = item.welcomeText || '';
+      $('photoLabel').classList.remove('required');
+      $('captureLibrary').hidden = true;
+      renderPreviews();
+      openDrawer();
+    }
+
+    function openDrawer() {
+      $('overlay').classList.add('open');
+      $('overlay').setAttribute('aria-hidden', 'false');
+      setTimeout(() => $('personName').focus(), 60);
+    }
+    function closeDrawer() {
+      if (state.busy) return;
+      $('overlay').classList.remove('open');
+      $('overlay').setAttribute('aria-hidden', 'true');
+    }
+
+    function addFiles(fileList) {
+      const valid = [...fileList].filter(file => ['image/jpeg', 'image/png'].includes(file.type));
+      state.files.push(...valid);
+      renderPreviews();
+    }
+    function renderPreviews() {
+      $('previews').innerHTML = state.files.map((file, index) => `<div class="preview"><img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}"><button onclick="removeFile(${index})" type="button">×</button></div>`).join('');
+    }
+    function removeFile(index) { state.files.splice(index, 1); renderPreviews(); }
+
+    async function toggleCaptureLibrary() {
+      const panel = $('captureLibrary');
+      panel.hidden = !panel.hidden;
+      if (!panel.hidden) await loadCaptures();
+    }
+
+    async function loadCaptures() {
+      $('captureLibraryStatus').textContent = '正在读取图片库…';
+      $('captureGrid').innerHTML = '';
+      try {
+        const result = await api('/api/face/captures');
+        state.captures = result.captures || [];
+        $('captureLibraryStatus').textContent = `共 ${state.captures.length} 张，点击照片即可选用`;
+        if (!state.captures.length) {
+          $('captureGrid').innerHTML = '<div class="help">图片库暂无照片，请先在平板点击“拍照取样”。</div>';
+          return;
+        }
+        $('captureGrid').innerHTML = state.captures.map(item => `
+          <button class="capture-card" type="button" onclick="selectCapture('${encodeURIComponent(item.id)}')">
+            <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.fileName)}" loading="lazy">
+            <div class="capture-meta"><strong>${new Date(item.capturedAt).toLocaleString()}</strong><span class="${Number(item.faceCount) > 0 ? 'capture-face-ok' : 'capture-face-bad'}">${Number(item.faceCount) > 0 ? `检测到 ${item.faceCount} 张人脸` : '未检测到人脸'}</span></div>
+          </button>`).join('');
+      } catch (error) {
+        $('captureLibraryStatus').textContent = '图片库读取失败';
+        $('captureGrid').innerHTML = `<div class="help">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    async function selectCapture(encodedId) {
+      const id = decodeURIComponent(encodedId);
+      const item = state.captures.find(capture => capture.id === id);
+      if (!item) return;
+      try {
+        const response = await fetch(item.imageUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`读取照片失败 HTTP ${response.status}`);
+        const blob = await response.blob();
+        state.files.push(new File([blob], item.fileName || `${id}.jpg`, { type: blob.type || 'image/jpeg' }));
+        renderPreviews();
+        toast('已从61图片库选择照片');
+      } catch (error) { toast(error.message, true); }
+    }
+
+    async function savePerson() {
+      if (state.busy) return;
+      const personId = $('personId').value.trim();
+      const name = $('personName').value.trim();
+      if (!personId || !name) return toast('请填写人员编号和姓名', true);
+      if (!state.editing && !state.files.length) return toast('新增人员至少需要一张识别照片', true);
+      const metadata = {
+        name,
+        targetScreen: $('targetScreen').value.trim() || 'all',
+        specialName: $('specialName').value.trim(),
+        welcomeText: $('welcomeText').value.trim(),
+        enabled: true,
+      };
+      state.busy = true;
+      $('saveButton').disabled = true;
+      $('progress').className = 'progress show';
+      try {
+        if (state.editing) {
+          $('progress').textContent = '正在保存人员资料…';
+          await api(`/api/face/persons/${encodeURIComponent(personId)}`, {
+            method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(metadata)
+          });
+        }
+        for (let index = 0; index < state.files.length; index++) {
+          $('progress').textContent = `正在处理照片 ${index + 1}/${state.files.length}…`;
+          const params = new URLSearchParams({
+            name: metadata.name,
+            target_screen: metadata.targetScreen,
+            special_name: metadata.specialName,
+            welcome_text: metadata.welcomeText,
+          });
+          await api(`/api/face/persons/${encodeURIComponent(personId)}/faces?${params}`, {
+            method: 'POST', headers: {'Content-Type': state.files[index].type}, body: state.files[index]
+          });
+        }
+        closeDrawerAfterSave();
+        toast(state.editing ? '人员资料已更新' : '人员已成功录入');
+        await loadAll();
+      } catch (error) {
+        toast(error.message, true);
+      } finally {
+        state.busy = false;
+        $('saveButton').disabled = false;
+        $('progress').className = 'progress';
+      }
+    }
+
+    function closeDrawerAfterSave() {
+      $('overlay').classList.remove('open');
+      $('overlay').setAttribute('aria-hidden', 'true');
+    }
+
+    async function removePerson(encodedId) {
+      const id = decodeURIComponent(encodedId);
+      const item = state.persons.find(person => person.personId === id);
+      if (!item || !confirm(`确定删除“${item.name}”吗？该人员的全部人脸特征也会删除。`)) return;
+      try {
+        await api(`/api/face/persons/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        toast('人员已删除');
+        await loadAll();
+      } catch (error) { toast(error.message, true); }
+    }
+
+    async function loadOptions() {
+      try {
+        const specials = await api('/api/specials');
+        const items = specials.specials || specials.items || [];
+        $('specialOptions').innerHTML = items.map(item => `<option value="${escapeHtml(item.name)}"></option>`).join('');
+      } catch {}
+      try {
+        const screens = await api('/api/screens');
+        const items = screens.screens || screens.devices || [];
+        $('screenOptions').innerHTML = '<option value="all"></option>' + items.map(item => `<option value="${escapeHtml(item.screenNumber)}">${escapeHtml(item.name || '')}</option>`).join('');
+      } catch {}
+    }
+
+    $('addButton').addEventListener('click', openCreate);
+    $('refreshButton').addEventListener('click', loadAll);
+    $('searchInput').addEventListener('input', render);
+    $('closeButton').addEventListener('click', closeDrawer);
+    $('cancelButton').addEventListener('click', closeDrawer);
+    $('saveButton').addEventListener('click', savePerson);
+    $('captureLibraryButton').addEventListener('click', toggleCaptureLibrary);
+    $('captureRefreshButton').addEventListener('click', loadCaptures);
+    $('overlay').addEventListener('click', event => { if (event.target === $('overlay')) closeDrawer(); });
+    $('dropZone').addEventListener('click', () => $('photoInput').click());
+    $('photoInput').addEventListener('change', event => addFiles(event.target.files));
+    for (const type of ['dragenter','dragover']) $('dropZone').addEventListener(type, event => { event.preventDefault(); $('dropZone').classList.add('drag'); });
+    for (const type of ['dragleave','drop']) $('dropZone').addEventListener(type, event => { event.preventDefault(); $('dropZone').classList.remove('drag'); });
+    $('dropZone').addEventListener('drop', event => addFiles(event.dataTransfer.files));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeDrawer(); });
+
+    loadAll();
+    loadOptions();
+  </script>
+</body>
+</html>

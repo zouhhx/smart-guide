@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAF9FF"
+    android:padding="8dp">
+
+    <Button android:id="@+id/returnToRobotButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="返回机器人界面" />
+
+    <!-- 服务器连接区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etServerIp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="中枢IP"
+            android:text="192.168.18.227" />
+
+        <EditText
+            android:id="@+id/etServerPort"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="端口"
+            android:inputType="number"
+            android:text="19888" />
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连接测试" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="机器人音色" android:textColor="#17324D" android:textSize="16sp"
+            android:layout_marginEnd="8dp" />
+        <Button android:id="@+id/chooseLocalVoice" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="冰糖 · 中文女声" android:textAllCaps="false"
+            android:contentDescription="选择机器人音色" />
+        <Button android:id="@+id/previewLocalVoice" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="试听" />
+    </LinearLayout>
+
+    <!-- 第一行按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnClearLog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="清除日志" />
+
+        <Button
+            android:id="@+id/btnPreview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="演示画面" />
+
+        <Button
+            android:id="@+id/btnOffline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="主动下线" />
+
+        <Button
+            android:id="@+id/btnGetBattery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="获取电量" />
+
+<Button
+            android:id="@+id/btnExit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="退出应用" />
+    </LinearLayout>
+
+    <!-- 播报测试区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/etTtsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:hint="输入要播报的文字"
+            android:text="欢迎参观展厅" />
+
+        <Button
+            android:id="@+id/btnTtsTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="播报测试" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <EditText
+            android:id="@+id/etFaceName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:hint="输入人名,不要重复注册同一个人脸" />
+
+        <Button
+            android:id="@+id/btnFaceRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="录入人脸" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="拍照预览"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"
+        android:text="对话内容"
+        android:textColor="#17324D"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:id="@+id/conversationScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:background="#F3F7FB"
+        android:fillViewport="true"
+        android:padding="18dp">
+
+        <TextView
+            android:id="@+id/conversationTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="8dp"
+            android:text="请先说‘小豹小豹’，然后开始提问"
+            android:textColor="#17212B"
+            android:textIsSelectable="true"
+            android:textSize="24sp" />
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/teachingCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#EDF4FA"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/teachingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#17324D"
+            android:textSize="22sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/finishTeachingButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="完成补充" />
+            <Button
+                android:id="@+id/cancelTeachingButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="取消" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 日志显示区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="#f0f0f0"
+        android:padding="4dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/logTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日志将显示在此...\n"
+            android:textSize="12sp"
+            android:typeface="monospace" />
+    </ScrollView>
+</LinearLayout>

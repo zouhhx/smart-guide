@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "seq": 2,
+  "reply": "",
+  "actions": [],
+  "target": "2",
+  "answerSource": "LLM",
+  "context": {
+    "rawModelOutput": "{\n\"answerStatus\": \"NO_KNOWLEDGE\",\n\"reply\": \"\"\n}",
+    "modelProvider": "ollama",
+    "robotAnswerStatus": "NO_KNOWLEDGE",
+    "refusalFallback": true,
+    "contextEligible": false,
+    "answerSource": "LLM",
+    "finalRoute": "LLM_NO_KNOWLEDGE",
+    "routeTrace": [
+      {
+        "handler": "route_policy",
+        "matched": false,
+        "status": "NONE",
+        "reason": "NO_MATCH",
+        "ruleId": "",
+        "ruleName": ""
+      },
+      {
+        "handler": "current_datetime",
+        "matched": false,
+        "status": "SKIPPED",
+        "reason": "NO_MATCH"
+      },
+      {
+        "handler": "web_search_intent",
+        "matched": false,
+        "status": "NO_MATCH",
+        "reason": "NO_MATCH"
+      },
+      {
+        "handler": "final_route",
+        "matched": true,
+        "status": "LLM_NO_KNOWLEDGE",
+        "reason": "LLM"
+      }
+    ],
+    "conversationId": "v5-stage-session-1788759871467"
+  },
+  "answerStatus": "ABSTAINED",
+  "reason": "NO_KNOWLEDGE",
+  "teachable": true,
+  "traceId": "2"
+}

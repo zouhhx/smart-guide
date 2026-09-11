@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>运维面板 — Exhibition Hub</title>
+  <style>
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+           margin: 0; background: #f5f7fb; color: #222; }
+    header { padding: 14px 24px; background: #1e3a5f; color: #fff;
+             display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 18px; font-weight: 500; }
+    header a { color: #9bc5ff; font-size: 13px; text-decoration: none; }
+    main { max-width: 1400px; margin: 16px auto; padding: 0 16px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+    .stat { background: #fff; padding: 14px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .stat .label { color: #888; font-size: 12px; }
+    .stat .val { font-size: 22px; font-weight: 600; margin-top: 4px; color: #1e3a5f; }
+    .stat .val.warn { color: #d97706; }
+    .stat .val.err { color: #dc2626; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card h2 { margin: 0 0 12px; font-size: 15px; font-weight: 500;
+               display: flex; justify-content: space-between; align-items: center; }
+    .card h2 .ctrl { font-weight: normal; font-size: 12px; }
+    .card h2 select { font-size: 12px; padding: 2px 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #eef; vertical-align: top; }
+    th { background: #fafbff; color: #555; font-weight: 500; }
+    tr:hover { background: #fcfdff; }
+    .sev-error { color: #dc2626; }
+    .sev-warning { color: #d97706; }
+    .sev-info { color: #2563eb; }
+    .status-ok { color: #059669; }
+    .status-fail { color: #dc2626; }
+    .status-reject { color: #d97706; }
+    .btn { padding: 3px 8px; font-size: 11px; border: 1px solid #ccd; background: #fff;
+           border-radius: 4px; cursor: pointer; color: #333; }
+    .btn:hover { background: #eef; }
+    .btn-primary { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+    .btn-primary:hover { background: #2d4f7f; }
+    .empty { padding: 20px; text-align: center; color: #aaa; font-size: 13px; }
+    .detail-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0,0,0,0.4); display: none; align-items: center;
+                    justify-content: center; z-index: 100; }
+    .detail-modal.show { display: flex; }
+    .detail-box { background: #fff; width: 80%; max-width: 900px; max-height: 85vh;
+                  overflow: auto; padding: 20px; border-radius: 8px; }
+    .detail-box h3 { margin: 0 0 10px; }
+    .detail-box pre { background: #f6f8fa; padding: 10px; overflow: auto;
+                      font-size: 12px; line-height: 1.5; border-radius: 4px; }
+    .section-title { color: #1e3a5f; font-weight: 600; margin: 12px 0 6px; font-size: 13px; }
+    .close-btn { float: right; cursor: pointer; color: #888; font-size: 20px; }
+    .close-btn:hover { color: #333; }
+    .occ { background: #fee; color: #dc2626; padding: 1px 6px; border-radius: 10px; font-size: 11px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🎛 Exhibition Hub 运维面板</h1>
+  <div>
+    <a href="/">← 主控台</a> &nbsp; <a href="#" onclick="reloadAll();return false">🔄 刷新</a>
+  </div>
+</header>
+
+<main>
+  <div class="stats" id="stats">
+    <div class="stat"><div class="label">plan 总数 (7d)</div><div class="val" id="s-total">–</div></div>
+    <div class="stat"><div class="label">成功率</div><div class="val" id="s-ok-rate">–</div></div>
+    <div class="stat"><div class="label">平均 LLM 延迟</div><div class="val" id="s-llm-avg">–</div></div>
+    <div class="stat"><div class="label">未解决告警</div><div class="val" id="s-alert-count">–</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>⚠️ 系统告警
+        <span class="ctrl">
+          <select id="alert-filter-kind" onchange="loadAlerts()">
+            <option value="">全部 kind</option>
+          </select>
+          <label style="font-size:12px;margin-left:8px"><input type="checkbox" id="alert-only-unresolved" checked onchange="loadAlerts()">仅未解决</label>
+        </span>
+      </h2>
+      <table>
+        <thead><tr><th>时间</th><th>源/类型</th><th>消息</th><th>次数</th><th></th></tr></thead>
+        <tbody id="alerts-body"><tr><td colspan="5" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🧭 Auto Plan 日志
+        <span class="ctrl">
+          <select id="plan-filter-status" onchange="loadPlans()">
+            <option value="">全部状态</option>
+            <option value="ok">ok</option>
+            <option value="llm_timeout">llm_timeout</option>
+            <option value="llm_error">llm_error</option>
+            <option value="parse_fail">parse_fail</option>
+            <option value="validator_rejected">validator_rejected</option>
+          </select>
+          <select id="plan-days" onchange="loadPlans()">
+            <option value="1">近1天</option>
+            <option value="7" selected>近7天</option>
+            <option value="30">近30天</option>
+          </select>
+        </span>
+      </h2>
+      <table>
+        <thead><tr><th>时间</th><th>用户原话</th><th>状态</th><th>LLM/ms</th><th>步数</th><th></th></tr></thead>
+        <tbody id="plans-body"><tr><td colspan="6" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="detail-modal" id="modal">
+  <div class="detail-box">
+    <span class="close-btn" onclick="document.getElementById('modal').classList.remove('show')">×</span>
+    <div id="modal-body">加载中…</div>
+  </div>
+</div>
+
+<script>
+async function api(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+  return r.json();
+}
+async function apiPost(path) {
+  const r = await fetch(path, { method: 'POST' });
+  return r.json();
+}
+
+function fmtTime(s) {
+  if (!s) return '';
+  return s.replace('T', ' ').replace('Z', '').slice(0, 19);
+}
+
+async function loadStats() {
+  try {
+    const stats = await api('/api/admin/plan_stats?days=7');
+    const dist = stats.status_distribution || [];
+    const total = dist.reduce((a, r) => a + r.n, 0);
+    const okN = (dist.find(r => r.status === 'ok') || {}).n || 0;
+    document.getElementById('s-total').textContent = total;
+    document.getElementById('s-ok-rate').textContent = total ? `${Math.round(okN * 100 / total)}%` : '–';
+    document.getElementById('s-llm-avg').textContent = `${stats.llm_latency_ms.avg || 0} ms`;
+    const alerts = await api('/api/admin/alerts?only_unresolved=true&limit=200');
+    const el = document.getElementById('s-alert-count');
+    el.textContent = alerts.total;
+    el.className = 'val ' + (alerts.total > 10 ? 'err' : alerts.total > 3 ? 'warn' : '');
+  } catch (e) { console.error('loadStats', e); }
+}
+
+async function loadAlerts() {
+  const kind = document.getElementById('alert-filter-kind').value;
+  const only = document.getElementById('alert-only-unresolved').checked ? 'true' : 'false';
+  const body = document.getElementById('alerts-body');
+  body.innerHTML = '<tr><td colspan="5" class="empty">加载中…</td></tr>';
+  try {
+    const qs = `?only_unresolved=${only}&limit=100` + (kind ? `&kind=${encodeURIComponent(kind)}` : '');
+    const d = await api('/api/admin/alerts' + qs);
+    // 收集 kind 填 dropdown
+    const kindSel = document.getElementById('alert-filter-kind');
+    const kinds = [...new Set(d.data.map(a => a.kind))];
+    const curr = kindSel.value;
+    if (kindSel.children.length - 1 !== kinds.length) {
+      kindSel.innerHTML = '<option value="">全部 kind</option>' + kinds.map(k => `<option value="${k}">${k}</option>`).join('');
+      kindSel.value = curr;
+    }
+    if (!d.data.length) { body.innerHTML = '<tr><td colspan="5" class="empty">无告警</td></tr>'; return; }
+    body.innerHTML = d.data.map(a => `
+      <tr>
+        <td>${fmtTime(a.created_at)}</td>
+        <td><div><b>${a.source}</b></div><div class="sev-${a.severity}">${a.kind}</div></td>
+        <td>${escapeHtml(a.message || '').slice(0, 80)}
+            ${a.robot_id ? `<div style="color:#999;font-size:11px">robot=${a.robot_id}</div>` : ''}
+        </td>
+        <td>${a.occurrences > 1 ? `<span class="occ">×${a.occurrences}</span>` : '1'}</td>
+        <td>${a.resolved ? '已解决' : `<button class="btn" onclick="resolveAlert(${a.id})">解决</button>`}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    body.innerHTML = `<tr><td colspan="5" class="empty" style="color:red">${e.message}</td></tr>`;
+  }
+}
+
+async function resolveAlert(id) {
+  await apiPost(`/api/admin/alerts/${id}/resolve`);
+  loadAlerts();
+  loadStats();
+}
+
+async function loadPlans() {
+  const status = document.getElementById('plan-filter-status').value;
+  const days = document.getElementById('plan-days').value;
+  const body = document.getElementById('plans-body');
+  body.innerHTML = '<tr><td colspan="6" class="empty">加载中…</td></tr>';
+  try {
+    const qs = `?days=${days}&limit=100` + (status ? `&status=${status}` : '');
+    const d = await api('/api/admin/plan_logs' + qs);
+    if (!d.data.length) { body.innerHTML = '<tr><td colspan="6" class="empty">无记录</td></tr>'; return; }
+    body.innerHTML = d.data.map(r => {
+      const statusClass = r.status === 'ok' ? 'status-ok' :
+                          (r.status === 'validator_rejected' ? 'status-reject' : 'status-fail');
+      return `
+      <tr>
+        <td>${fmtTime(r.created_at)}</td>
+        <td>${escapeHtml(r.user_text || '').slice(0, 30)}
+            ${r.visitor_id ? `<div style="color:#999;font-size:11px">visitor=${r.visitor_id}</div>` : ''}
+        </td>
+        <td><span class="${statusClass}">${r.status}</span>
+            ${r.error ? `<div style="color:#999;font-size:11px">${escapeHtml(r.error).slice(0, 40)}</div>` : ''}
+        </td>
+        <td>${r.llm_elapsed_ms}</td>
+        <td>${r.parsed_steps}</td>
+        <td><button class="btn" onclick="showPlanDetail(${r.id})">详情</button></td>
+      </tr>
+      `;
+    }).join('');
+  } catch (e) {
+    body.innerHTML = `<tr><td colspan="6" class="empty" style="color:red">${e.message}</td></tr>`;
+  }
+}
+
+async function showPlanDetail(id) {
+  const modal = document.getElementById('modal');
+  const box = document.getElementById('modal-body');
+  box.innerHTML = '加载中…';
+  modal.classList.add('show');
+  try {
+    const d = await api(`/api/admin/plan_logs/${id}`);
+    const r = d.data;
+    const fp = r.final_plan || {};
+    const sn = r.snapshot || {};
+    const stepsHtml = (fp.steps || []).map((s, i) =>
+      `<div>[${i}] <b>${s.type}</b> ${escapeHtml(JSON.stringify(s.payload)).slice(0, 200)}</div>`
+    ).join('');
+    box.innerHTML = `
+      <h3>Plan #${r.id} <span style="font-weight:normal;font-size:12px;color:#888">${fmtTime(r.created_at)}</span></h3>
+      <div><b>用户原话:</b> ${escapeHtml(r.user_text || '')}</div>
+      <div><b>状态:</b> ${r.status} | validator=${r.validator_status} | LLM=${r.llm_elapsed_ms}ms | 解析步数=${r.parsed_steps}</div>
+      ${r.error ? `<div style="color:#c00"><b>错误:</b> ${escapeHtml(r.error)}</div>` : ''}
+
+      ${fp.title ? `
+        <div class="section-title">📜 最终 Plan</div>
+        <div><b>${escapeHtml(fp.title)}</b> · ${fp.est_total_seconds}s</div>
+        <div style="color:#666;font-size:12px;margin:4px 0"><b>Rationale:</b> ${escapeHtml(fp.rationale || '')}</div>
+        <div style="font-size:12px;line-height:1.8">${stepsHtml}</div>
+      ` : ''}
+
+      <div class="section-title">🧭 Snapshot</div>
+      <pre>${escapeHtml(JSON.stringify(sn, null, 2)).slice(0, 2000)}</pre>
+
+      <div class="section-title">🤖 LLM Raw (前 3000 字)</div>
+      <pre>${escapeHtml((r.llm_raw || '').slice(0, 3000))}</pre>
+    `;
+  } catch (e) {
+    box.innerHTML = `<div style="color:red">${e.message}</div>`;
+  }
+}
+
+function escapeHtml(s) {
+  return (s + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function reloadAll() { loadStats(); loadAlerts(); loadPlans(); }
+reloadAll();
+setInterval(() => { loadStats(); }, 30000);
+</script>
+</body>
+</html>

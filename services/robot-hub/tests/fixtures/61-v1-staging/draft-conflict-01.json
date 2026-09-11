@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-09-07T06:55:55.185138+00:00",
+  "endpoint": "http://192.168.16.61:3481/api/knowledge/qa-drafts",
+  "request": {
+    "schemaVersion": "1.0.0",
+    "submissionId": "da686c87-ada4-4893-986e-d210adeacbdb",
+    "question": "什么是本次V5联调？",
+    "rawAnswer": "本次联调检查机器人问答、现场补充、临时复述以及保存待审核草稿，不发布正式知识。不同内容。",
+    "suggestedAnswer": "",
+    "sessionId": "v5-staging-r1-5f4d35ed-ba96-45f7-b788-1e3c1a6f9e6b",
+    "teachingTurnId": "6fdeb1ae-a6cb-4e66-b0ac-231d7e6cb575",
+    "completionReason": "button",
+    "source": "EXHIBITION_ROBOT",
+    "robotId": "robot_001",
+    "createdAt": "2026-09-07T06:55:43.473Z"
+  },
+  "httpStatus": 409,
+  "elapsedSeconds": 0.0,
+  "response": {
+    "error": "submissionId already exists with different content"
+  }
+}

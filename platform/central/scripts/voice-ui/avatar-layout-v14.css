@@ -1,0 +1,57 @@
+/* Explicit placement keeps new voice settings out of the legacy implicit rows. */
+.digital-human-console {
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
+  grid-template-areas:
+    "status status"
+    "voice service"
+    "voice runtime"
+    "voice test";
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+.digital-human-console > .service-status-grid { grid-area: status; }
+.digital-human-console > .local-voice-settings { grid-area: voice; }
+.digital-human-console > .digital-human-service { grid-area: service; }
+.digital-human-console > .digital-human-runtime { grid-area: runtime; }
+.digital-human-console > .digital-human-test { grid-area: test; align-self: stretch; }
+.digital-human-console > * { min-width: 0; }
+.digital-human-console .digital-human-runtime .digital-human-section-head {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 12px;
+}
+.digital-human-console .digital-human-target,
+.digital-human-console .digital-human-target select { width: 100%; min-width: 0; }
+.digital-human-console .digital-human-section-head > div { min-width: 0; }
+.digital-human-console .digital-human-section-head > button,
+.digital-human-console .digital-human-actions { flex-shrink: 0; }
+.digital-human-console .service-status-card strong,
+.digital-human-console .service-status-card small { overflow-wrap: anywhere; }
+.digital-human-console .local-voice-settings textarea {
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #d8e2ee;
+  border-radius: 6px;
+  color: #20324a;
+  font: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+.digital-human-console .local-voice-settings label { display: block; color: #42536a; font-size: 13px; }
+.digital-human-console .local-voice-settings > p { font-size: 14px; line-height: 1.65; }
+.digital-human-console .digital-human-test textarea { min-height: 140px; }
+@media (max-width: 1200px) {
+  .digital-human-console {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "status" "voice" "service" "runtime" "test";
+    grid-template-rows: auto;
+  }
+  .digital-human-console .digital-human-test textarea { flex: none; }
+}
+@media (max-width: 700px) {
+  .digital-human-console > .service-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .digital-human-console .digital-human-section-head { align-items: stretch; flex-direction: column; }
+  .digital-human-console .digital-human-actions { flex-wrap: wrap; }
+  .digital-human-console > .local-voice-settings { padding: 18px !important; }
+}

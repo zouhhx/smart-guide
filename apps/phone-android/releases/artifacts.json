@@ -1,0 +1,17 @@
+{
+  "product": "exhibition-hall-android-phone",
+  "versionName": "1.7",
+  "versionCode": 8,
+  "packageName": "com.codexpro.digitalhumanasr",
+  "artifacts": [
+    {
+      "file": "app-release-speech-interrupt-v1.7-20260910.apk",
+      "sizeBytes": 20585611,
+      "sha256": "68D604C7B77C5FBD2918FBBA37302C023E89CA6DFEAACC6570D5D97BEB1724ED",
+      "signingCertificateSha256": "18fcfbb0c08687a5f5995d56c5a97dfa67d8e2d58005d1d142cb50c3029f31bd",
+      "signing": "Android Debug certificate; Release behavior; v2/v3 verified",
+      "verification": "Field test artifact; intermittent speech interrupt issue remains open",
+      "provenance": "Built before the first Git baseline. Retained unchanged. The first Git commit externalizes build credentials; this APK was not rebuilt from that commit."
+    }
+  ]
+}

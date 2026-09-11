@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist*/
+build/
+*.tsbuildinfo
+
+# Environment and credentials
+.env
+.env.local
+.env.*.local
+
+# Runtime data and large assets
+/data/
+/media/
+/backups/
+/logs/
+/zipcheck-style/
+src/src/
+
+# Generated archives and transient payloads
+*.zip
+*.bak*
+tts-payload.json
+
+# Logs and caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+.parcel-cache/
+coverage/
+.nyc_output/
+__pycache__/
+*.py[cod]
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Accidental shell artifact present on the runtime host
+console.error(e))

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>机器人回调日志 — Exhibition Hub</title>
+  <style>
+    body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+           margin: 0; background: #f5f7fb; color: #222; }
+    header { padding: 14px 24px; background: #1e3a5f; color: #fff;
+             display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 18px; font-weight: 500; }
+    header .links a { color: #9bc5ff; font-size: 13px; text-decoration: none; margin-left: 12px; }
+    main { max-width: 1600px; margin: 16px auto; padding: 0 16px; }
+
+    .toolbar { background: #fff; padding: 12px 16px; border-radius: 8px;
+               box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 12px;
+               display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .toolbar label { font-size: 13px; color: #555; display: flex; align-items: center; gap: 6px; }
+    .toolbar select, .toolbar input[type=number] {
+      font-size: 13px; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; }
+    .toolbar .sep { color: #ccc; }
+    .toolbar button { font-size: 13px; padding: 5px 12px; border: 1px solid #1e3a5f;
+                      background: #1e3a5f; color: #fff; border-radius: 4px; cursor: pointer; }
+    .toolbar button.ghost { background: #fff; color: #1e3a5f; }
+    .toolbar .status { margin-left: auto; font-size: 12px; color: #888; }
+    .toolbar .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+                    background: #10b981; margin-right: 4px; }
+    .toolbar .dot.paused { background: #9ca3af; }
+
+    .stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .stat { background: #fff; padding: 8px 12px; border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 12px;
+            display: flex; align-items: center; gap: 6px; }
+    .stat .stat-label { color: #666; }
+    .stat .stat-val { font-weight: 600; color: #1e3a5f; }
+
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eef; vertical-align: top; }
+    th { background: #fafbff; color: #555; font-weight: 500;
+         position: sticky; top: 0; z-index: 1; }
+    tr:hover { background: #fafcff; }
+    td.time { color: #666; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+              font-size: 12px; white-space: nowrap; }
+    td.detail { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 12px; color: #333; word-break: break-all; max-width: 600px; }
+    td.source, td.target { font-size: 12px; color: #666; }
+
+    /* action 标签颜色按语义分组 */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 10px;
+           font-size: 11px; font-weight: 600; letter-spacing: 0.2px;
+           white-space: nowrap; }
+    .tag-asr       { background: #dbeafe; color: #1e40af; }
+    .tag-asrWakeup { background: #ede9fe; color: #6d28d9; }
+    .tag-asrError  { background: #fee2e2; color: #b91c1c; }
+    .tag-tts       { background: #d1fae5; color: #065f46; }
+    .tag-nav       { background: #ffedd5; color: #c2410c; }
+    .tag-motion    { background: #fef3c7; color: #92400e; }
+    .tag-dance     { background: #fce7f3; color: #9d174d; }
+    .tag-face      { background: #e0e7ff; color: #3730a3; }
+    .tag-default   { background: #e5e7eb; color: #374151; }
+
+    .text-hi { background: #fffbeb; padding: 1px 4px; border-radius: 3px; color: #92400e; }
+    .muted { color: #999; }
+    .empty { padding: 40px; text-align: center; color: #999; }
+    .row-new { animation: flash 1.2s ease-out; }
+    @keyframes flash { from { background: #fef9c3; } to { background: transparent; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>机器人回调日志 · /api/unitree/event</h1>
+    <div class="links">
+      <a href="/">首页</a>
+      <a href="/admin.html">运维面板</a>
+      <a href="/api/unitree/event/debug" target="_blank">waiters 诊断</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <label>action
+        <select id="f-action">
+          <option value="">全部</option>
+          <option value="asr">asr</option>
+          <option value="asrWakeup">asrWakeup</option>
+          <option value="asrError">asrError</option>
+          <option value="ttsFinished">ttsFinished</option>
+          <option value="navTaskFinished">navTaskFinished</option>
+          <option value="navTaskPaused">navTaskPaused</option>
+          <option value="motionPlaybackFinished">motionPlaybackFinished</option>
+          <option value="danceFinished">danceFinished</option>
+          <option value="faceRecognition">faceRecognition</option>
+        </select>
+      </label>
+      <label>显示条数
+        <input type="number" id="f-limit" value="200" min="20" max="500" step="20">
+      </label>
+      <span class="sep">|</span>
+      <label><input type="checkbox" id="f-auto" checked> 自动刷新 (2s)</label>
+      <button id="btn-refresh">立即刷新</button>
+      <button id="btn-clear" class="ghost" title="仅清空本页显示, 不删服务器数据">清屏</button>
+      <span class="status"><span id="live-dot" class="dot"></span><span id="live-text">已连接</span> · <span id="last-at" class="muted">—</span></span>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:160px;">时间</th>
+            <th style="width:180px;">action</th>
+            <th style="width:140px;">source → target</th>
+            <th>params (detail)</th>
+            <th style="width:60px;">status</th>
+          </tr>
+        </thead>
+        <tbody id="rows"><tr><td colspan="5" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+    const state = { lastMaxId: 0, seenIds: new Set(), paused: false };
+
+    function tagClass(action) {
+      if (action === 'asr') return 'tag-asr';
+      if (action === 'asrWakeup') return 'tag-asrWakeup';
+      if (action === 'asrError') return 'tag-asrError';
+      if (action.startsWith('tts')) return 'tag-tts';
+      if (action.startsWith('nav')) return 'tag-nav';
+      if (action.startsWith('motion')) return 'tag-motion';
+      if (action.startsWith('dance')) return 'tag-dance';
+      if (action.startsWith('face')) return 'tag-face';
+      return 'tag-default';
+    }
+
+    function fmtTime(s) {
+      // created_at 是 UTC naive string; 本地显示
+      if (!s) return '';
+      const d = new Date(s.replace(' ', 'T') + 'Z');
+      if (isNaN(d)) return s;
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function fmtDetail(action, detailRaw) {
+      if (!detailRaw) return '<span class="muted">—</span>';
+      let obj;
+      try { obj = JSON.parse(detailRaw); } catch { return escapeHtml(detailRaw); }
+      // 高亮 asr 的 text
+      if (action === 'asr' && obj && typeof obj.text === 'string') {
+        const rest = Object.keys(obj).filter(k => k !== 'text');
+        const extra = rest.length ? ' ' + rest.map(k => `${k}=${JSON.stringify(obj[k])}`).join(' ') : '';
+        return `<span class="text-hi">text=${escapeHtml(obj.text)}</span><span class="muted">${escapeHtml(extra)}</span>`;
+      }
+      // 其它事件: 扁平展开 key=value
+      const parts = Object.entries(obj).map(([k, v]) => `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`);
+      return escapeHtml(parts.join('  '));
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function renderStats(rows) {
+      const counts = {};
+      rows.forEach(r => counts[r.action] = (counts[r.action] || 0) + 1);
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      const html = [`<div class="stat"><span class="stat-label">显示</span><span class="stat-val">${rows.length}</span></div>`]
+        .concat(sorted.map(([a, n]) =>
+          `<div class="stat"><span class="tag ${tagClass(a)}">${escapeHtml(a)}</span><span class="stat-val">${n}</span></div>`))
+        .join('');
+      el('stats').innerHTML = html;
+    }
+
+    function renderRows(rows) {
+      const tbody = el('rows');
+      if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">暂无回调记录</td></tr>'; return; }
+      const maxIdBefore = state.lastMaxId;
+      const frag = rows.map(r => {
+        const isNew = r.id > maxIdBefore && maxIdBefore > 0;
+        state.seenIds.add(r.id);
+        if (r.id > state.lastMaxId) state.lastMaxId = r.id;
+        const tag = `<span class="tag ${tagClass(r.action)}">${escapeHtml(r.action || '?')}</span>`;
+        const st = r.status === 'ok'
+          ? '<span style="color:#10b981;">✓</span>'
+          : `<span style="color:#dc2626;">${escapeHtml(r.status || '')}</span>`;
+        return `<tr class="${isNew ? 'row-new' : ''}">
+          <td class="time">${fmtTime(r.created_at)}</td>
+          <td>${tag}</td>
+          <td class="source">${escapeHtml(r.source || '')} → ${escapeHtml(r.target || '')}</td>
+          <td class="detail">${fmtDetail(r.action, r.detail)}</td>
+          <td>${st}</td>
+        </tr>`;
+      }).join('');
+      tbody.innerHTML = frag;
+    }
+
+    async function fetchOnce() {
+      const action = el('f-action').value;
+      const limit = Math.max(20, Math.min(500, parseInt(el('f-limit').value) || 200));
+      const url = `/api/system/logs?log_type=unitree_event&limit=${limit}`;
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const j = await resp.json();
+        let rows = j.data || [];
+        if (action) rows = rows.filter(r => r.action === action);
+        renderStats(rows);
+        renderRows(rows);
+        el('live-dot').classList.remove('paused');
+        el('live-text').textContent = '已连接';
+        el('last-at').textContent = '最近刷新 ' + new Date().toLocaleTimeString();
+      } catch (e) {
+        el('live-dot').classList.add('paused');
+        el('live-text').textContent = '请求失败';
+        el('last-at').textContent = String(e);
+      }
+    }
+
+    let timer = null;
+    function applyAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+      if (el('f-auto').checked) timer = setInterval(fetchOnce, 2000);
+    }
+
+    el('btn-refresh').addEventListener('click', fetchOnce);
+    el('btn-clear').addEventListener('click', () => {
+      el('rows').innerHTML = '<tr><td colspan="5" class="empty">已清屏, 下次刷新会重新拉取</td></tr>';
+      el('stats').innerHTML = '';
+      state.lastMaxId = 0; state.seenIds.clear();
+    });
+    el('f-action').addEventListener('change', fetchOnce);
+    el('f-limit').addEventListener('change', fetchOnce);
+    el('f-auto').addEventListener('change', applyAuto);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { if (timer) { clearInterval(timer); timer = null; } }
+      else applyAuto();
+    });
+
+    fetchOnce();
+    applyAuto();
+  </script>
+</body>
+</html>

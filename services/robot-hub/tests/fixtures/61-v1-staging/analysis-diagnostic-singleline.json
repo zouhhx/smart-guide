@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-09-07T07:05:34.001133+00:00",
+  "request": {
+    "schemaVersion": "1.0.0",
+    "analysisId": "4427f762-8a06-4f04-b1fa-3811f2fc348e",
+    "teachingTurnId": "904cfc75-f49b-455c-b14f-41d352b7293b",
+    "revision": 2,
+    "robotId": "robot_001",
+    "sessionId": "9f3a62f0-df89-4ba8-a992-3e0c32982199",
+    "question": "本次联调的专用测试展品青岚七号有什么用途？",
+    "accumulatedTranscript": "青岚七号是本次联调使用的虚构测试展品。它用于检查机器人能否记录现场补充、临时复述并保存待审核草稿。",
+    "fragmentCount": 2,
+    "isFinal": true,
+    "completionReason": "button"
+  },
+  "diagnosticHttpDeadlineSeconds": 8,
+  "applicationHttpDeadlineSeconds": 5,
+  "httpStatus": 200,
+  "response": {
+    "schemaVersion": "1.0.0",
+    "analysisId": "4427f762-8a06-4f04-b1fa-3811f2fc348e",
+    "teachingTurnId": "904cfc75-f49b-455c-b14f-41d352b7293b",
+    "revision": 2,
+    "status": "OK",
+    "relevance": "RELATED",
+    "completeness": "SUFFICIENT",
+    "factuality": "UNVERIFIED",
+    "canReplay": true,
+    "replayAnswer": "青岚七号是本次联调使用的虚构测试展品，用于检查机器人能否记录现场补充、临时复述并保存待审核草稿。.",
+    "warnings": [],
+    "evidenceRefs": [],
+    "traceId": "9d228089-0efd-4dc9-890e-3b7b4860439f"
+  },
+  "elapsedSeconds": 1.485
+}

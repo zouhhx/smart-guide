@@ -1,0 +1,20 @@
+{
+  "name": "exhibition-hall-relay",
+  "version": "1.0.0",
+  "description": "展厅智能中控 - 本地中转服务 Phase 1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "build:admin": "node scripts/build-admin-ppt-thumbnail-ui.mjs",
+    "test": "node src/test.js",
+    "test:knowledge-scope": "node --test test/knowledge-scope.test.js",
+    "test:current-unit-qa": "node scripts/verify-current-unit-qa.mjs"
+  },
+  "dependencies": {
+    "@andresaya/edge-tts": "^1.8.0",
+    "uuid": "^11.0.3",
+    "ws": "^8.18.0"
+  }
+}

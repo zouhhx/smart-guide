@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voice-gateway-p1"
+version = "0.3.8"
+description = "展厅中英混合KWS/VAD/ASR离线语音网关"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy==2.3.1",
+  "pypinyin==0.55.0",
+  "sherpa-onnx==1.13.2",
+  "sounddevice==0.5.2",
+]
+
+[project.scripts]
+voice-gateway = "voice_gateway.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

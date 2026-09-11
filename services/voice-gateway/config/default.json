@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "device_id": "G10-C-P1",
+  "audio": {
+    "sample_rate": 16000,
+    "frame_samples": 512,
+    "input_device": null,
+    "capture_sample_rate": null,
+    "channels": 1
+  },
+  "activation": {
+    "mode": "kws",
+    "level_threshold_dbfs": -35.0
+  },
+  "kws": {
+    "enabled": true,
+    "keyword": "你好思德",
+    "tokens": "models/kws/tokens.txt",
+    "encoder": "models/kws/encoder-epoch-12-avg-2-chunk-16-left-64.int8.onnx",
+    "decoder": "models/kws/decoder-epoch-12-avg-2-chunk-16-left-64.onnx",
+    "joiner": "models/kws/joiner-epoch-12-avg-2-chunk-16-left-64.int8.onnx",
+    "keywords_file": "runtime/keywords.txt",
+    "num_threads": 2,
+    "max_active_paths": 4,
+    "score": 1.5,
+    "threshold": 0.25,
+    "trailing_blanks": 1
+  },
+  "vad": {
+    "model": "models/vad/silero_vad.onnx",
+    "threshold": 0.50,
+    "min_silence_seconds": 0.60,
+    "min_speech_seconds": 0.25,
+    "max_speech_seconds": 15.0,
+    "buffer_seconds": 30
+  },
+  "asr": {
+    "model": "models/asr/model.int8.onnx",
+    "tokens": "models/asr/tokens.txt",
+    "language": "",
+    "use_itn": true,
+    "num_threads": 4,
+    "replacements": {
+      "展向": "展项",
+      "展相": "展项",
+      "A I": "AI",
+      "ＡＩ": "AI"
+    }
+  },
+  "session": {
+    "cooldown_ms": 150,
+    "file_tail_silence_seconds": 1.2,
+    "speech_wait_timeout_seconds": 8.0
+  },
+  "logging": {
+    "directory": "logs",
+    "results_directory": "results",
+    "level": "INFO",
+    "retention_days": 30
+  }
+}

@@ -1,0 +1,907 @@
+[
+    {
+        "path":  "_internal/_asyncio.pyd",
+        "bytes":  59392,
+        "sha256":  "fccc1c343e9fe96dcf84b72e46c097055ece704f3198c18cefbcade49c66096d"
+    },
+    {
+        "path":  "_internal/_bz2.pyd",
+        "bytes":  73216,
+        "sha256":  "969b76222584b7ad1da3e8e1a4bc45f1f892dc47f2996e883dde5feb398a91a8"
+    },
+    {
+        "path":  "_internal/_cffi_backend.cp312-win_amd64.pyd",
+        "bytes":  181248,
+        "sha256":  "058cb0de6db01e45d7f8e1f5947adfa32b5ffbb03836e13578321759f69dbc95"
+    },
+    {
+        "path":  "_internal/_ctypes.pyd",
+        "bytes":  116224,
+        "sha256":  "7282d8f2b41cd565e8df0e87a42c79accaa7fedc133137552d49dfbc006f34c8"
+    },
+    {
+        "path":  "_internal/_decimal.pyd",
+        "bytes":  246272,
+        "sha256":  "fcdc8bc61ee2dac17fbb9a8eea45242e22a34d1a71abac9bee7f732dc3f8b79f"
+    },
+    {
+        "path":  "_internal/_hashlib.pyd",
+        "bytes":  54784,
+        "sha256":  "f0a3f3c8ced4be5efc3cb47e4de8320a0c59852b52310e1cb0541a56b0cc42ba"
+    },
+    {
+        "path":  "_internal/_lzma.pyd",
+        "bytes":  152576,
+        "sha256":  "fc151659d1083706c7cc76d459b8cb9393d3b37897bba398928f410791f38f9b"
+    },
+    {
+        "path":  "_internal/_multiprocessing.pyd",
+        "bytes":  24064,
+        "sha256":  "66a7f033dd26d4c4f6717576fe4fa47b2fdb84ab6b564f05b7452b31a0ebd039"
+    },
+    {
+        "path":  "_internal/_overlapped.pyd",
+        "bytes":  44032,
+        "sha256":  "5b5e23511e7ef1da0bf6eb560c330990afddce480a45c68e3ea2f7e15a2e2a3c"
+    },
+    {
+        "path":  "_internal/_queue.pyd",
+        "bytes":  20480,
+        "sha256":  "04ff7d983ac5e4659aac51145be4e39e3b0aedd15a3df2c3ebfeb8570f83905a"
+    },
+    {
+        "path":  "_internal/_socket.pyd",
+        "bytes":  71680,
+        "sha256":  "762e124059728986555e815698fb9ce0cf3c50e84adb6ba0df4a96d324079a93"
+    },
+    {
+        "path":  "_internal/_sounddevice_data/portaudio-binaries/libportaudio64bit.dll",
+        "bytes":  306688,
+        "sha256":  "433b77811ed6a2509cd15d9af826335c458cd0ef5f424b02b97597c74e170462"
+    },
+    {
+        "path":  "_internal/_sounddevice_data/portaudio-binaries/libportaudio64bit-asio.dll",
+        "bytes":  340992,
+        "sha256":  "6808336cc7984aff95a7e060bacc3302cea08ef08e749dd6c4327713fa658d35"
+    },
+    {
+        "path":  "_internal/_sounddevice_data/portaudio-binaries/README.md",
+        "bytes":  974,
+        "sha256":  "b3cb053566b6f38c38bdf4822e53f8f8a2a377e05c503fdd69c52e5d1c6c104c"
+    },
+    {
+        "path":  "_internal/_ssl.pyd",
+        "bytes":  164864,
+        "sha256":  "31bed7c9c6e8e997e9cf92ec40d250269c80e8a0d2216be3b5afefd26f038c5e"
+    },
+    {
+        "path":  "_internal/_uuid.pyd",
+        "bytes":  13824,
+        "sha256":  "dc53e95f037f17c5665fb4aa729e273e3c6dc49017f3df7f8d7ecb631e04495c"
+    },
+    {
+        "path":  "_internal/_wmi.pyd",
+        "bytes":  25600,
+        "sha256":  "7399862a3be13b981553b7fa2e1a64b2f8cda92c15c5966faf81a514d36210f1"
+    },
+    {
+        "path":  "_internal/base_library.zip",
+        "bytes":  1333490,
+        "sha256":  "d3f92af555f76ac75eae4fd465036f2c21e102ccb583b6383ef35d3c7c0d1cf2"
+    },
+    {
+        "path":  "_internal/libcrypto-3-x64.dll",
+        "bytes":  7976960,
+        "sha256":  "e3575b8d13adfa7693ca7f8b7e4f94f24df33c8d64085972e28c213e225ddcb0"
+    },
+    {
+        "path":  "_internal/libffi-8.dll",
+        "bytes":  28160,
+        "sha256":  "1163e242ec38a0de598ba7956353987c7167c0c6d5000625c3b3fc6e75669206"
+    },
+    {
+        "path":  "_internal/libssl-3-x64.dll",
+        "bytes":  1579008,
+        "sha256":  "28143bcd23fb00b7fabd66fdfba23a68640862f1fb1582d6ec581419afd206be"
+    },
+    {
+        "path":  "_internal/numpy.libs/libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll",
+        "bytes":  20390912,
+        "sha256":  "6547e9fb966e9773caee2755e91a8bf4d6f3a2f0eebf9646b0158f8675ea4ab5"
+    },
+    {
+        "path":  "_internal/numpy.libs/msvcp140-263139962577ecda4cd9469ca360a746.dll",
+        "bytes":  575056,
+        "sha256":  "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde"
+    },
+    {
+        "path":  "_internal/numpy/_core/_multiarray_tests.cp312-win_amd64.pyd",
+        "bytes":  63488,
+        "sha256":  "f50c81c4f9fbf704b824cf4531cacebc9ae1b7066b2da03b0c20fac9238585cf"
+    },
+    {
+        "path":  "_internal/numpy/_core/_multiarray_umath.cp312-win_amd64.pyd",
+        "bytes":  4473856,
+        "sha256":  "1aaa17c8990e8d1c9d843fcaa59beea683392da7195b9902d53c4a2216aca86d"
+    },
+    {
+        "path":  "_internal/numpy/fft/_pocketfft_umath.cp312-win_amd64.pyd",
+        "bytes":  282112,
+        "sha256":  "99f7b8aa540e29d5f30820e3bfb9bf5c230f3d88813ee7cf15e6d8628a2cb29b"
+    },
+    {
+        "path":  "_internal/numpy/linalg/_umath_linalg.cp312-win_amd64.pyd",
+        "bytes":  111616,
+        "sha256":  "1aca31a226586cf48d9fff9998c74414ef7f6b7513e8a29914c52a876eea6660"
+    },
+    {
+        "path":  "_internal/numpy/random/_bounded_integers.cp312-win_amd64.pyd",
+        "bytes":  207872,
+        "sha256":  "a7c6c2245ac8a68fc554fc192d559faad783f257a1b1e72dec4a870bc1ea54b0"
+    },
+    {
+        "path":  "_internal/numpy/random/_common.cp312-win_amd64.pyd",
+        "bytes":  165376,
+        "sha256":  "64932621a2cc697f7a848dc5f9e6b2a5dc6bca5178ad25714da08e432c20bc0f"
+    },
+    {
+        "path":  "_internal/numpy/random/_generator.cp312-win_amd64.pyd",
+        "bytes":  721920,
+        "sha256":  "303b8637d282ef9afa1edb79010f3f56d6206dc05e97b8777a521bb5846e192a"
+    },
+    {
+        "path":  "_internal/numpy/random/_mt19937.cp312-win_amd64.pyd",
+        "bytes":  85504,
+        "sha256":  "214d062814be4074f515b162351f3c32b8ddfa93617e2847c62f3f5cc2f90d12"
+    },
+    {
+        "path":  "_internal/numpy/random/_pcg64.cp312-win_amd64.pyd",
+        "bytes":  96256,
+        "sha256":  "bb413201394510df21b4cfcd7f0b777ee06e003107e070152ffd6ea749a776a5"
+    },
+    {
+        "path":  "_internal/numpy/random/_philox.cp312-win_amd64.pyd",
+        "bytes":  79872,
+        "sha256":  "0958e7e938370a7c1c24e093f980e63f2a834ed6e32b0f68f9243dea9cba4a00"
+    },
+    {
+        "path":  "_internal/numpy/random/_sfc64.cp312-win_amd64.pyd",
+        "bytes":  60416,
+        "sha256":  "e08283a8297d8966aa1ffe29c7530ae493d4953d1066c34b8eb77f79f102d788"
+    },
+    {
+        "path":  "_internal/numpy/random/bit_generator.cp312-win_amd64.pyd",
+        "bytes":  167936,
+        "sha256":  "43ee11f61609d4d52d7bbee605c7a693e3d672b2d57bfe97e84d7834f2eeef3f"
+    },
+    {
+        "path":  "_internal/numpy/random/mtrand.cp312-win_amd64.pyd",
+        "bytes":  606720,
+        "sha256":  "e0194286c4a50ec1453082cfcea6c10a491651c6f5832c8f0b6069263175fed1"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/DELVEWHEEL",
+        "bytes":  446,
+        "sha256":  "010f9eb9a0305987a97a22b15f71998584f130955f4095bccaf7f4833ead5915"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/entry_points.txt",
+        "bytes":  220,
+        "sha256":  "ec26fade0c8bdac211a6c1dd003a65eb16885b925395423e93fcaa115af4052c"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/INSTALLER",
+        "bytes":  4,
+        "sha256":  "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/LICENSE.txt",
+        "bytes":  47722,
+        "sha256":  "233d7ab5c32bc4aed6848f647d397007965acdb691c86fe27d17cc3eb60359d1"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/METADATA",
+        "bytes":  60884,
+        "sha256":  "f7d0f469c0119fc377f4944ed71b283861fb8e19e7f08d56ed7e934896ae246b"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/RECORD",
+        "bytes":  110658,
+        "sha256":  "462480eacbe68b42107e91fb6baab8d20c389f49bd62a0760ba136e9e127ed1a"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/REQUESTED",
+        "bytes":  0,
+        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+        "path":  "_internal/numpy-2.3.1.dist-info/WHEEL",
+        "bytes":  85,
+        "sha256":  "e743de01ba6503a3e4234858398a1e69c07d512d51e8482ec9f3a7b1c707d165"
+    },
+    {
+        "path":  "_internal/pyexpat.pyd",
+        "bytes":  204288,
+        "sha256":  "0480cea6b86a8d99bfd735666aa7966ac252bd74d97de0bf5dcd19c2452d8e14"
+    },
+    {
+        "path":  "_internal/pypinyin/__init__.pyi",
+        "bytes":  1527,
+        "sha256":  "06a56de3de53f7a4072bc91476d7a51bb104365caae1088166e12ef52660e22f"
+    },
+    {
+        "path":  "_internal/pypinyin/compat.pyi",
+        "bytes":  280,
+        "sha256":  "902c4e0d8db56cc0a556cdb54d7156c4171f5ec63dc5b2a8052c7a6e9b7abb9c"
+    },
+    {
+        "path":  "_internal/pypinyin/constants.pyi",
+        "bytes":  1611,
+        "sha256":  "0adee30aedb402284a2489fb46795ec29f355f59442956d3eb0503fee5b5b2eb"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/_tone_rule.pyi",
+        "bytes":  128,
+        "sha256":  "87811c1174522d1bf55f4bc07dc772c7c648cdf0e1cecb9b1f2da5e8bdb73f99"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/mmseg.pyi",
+        "bytes":  591,
+        "sha256":  "950bd91176567aad3744c006ebf85e8b7bd77432944944feaccc4ee5ea77c801"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/neutral_tone.pyi",
+        "bytes":  518,
+        "sha256":  "c6ba84075db7e4e1c265a5ca575aaeda41f434ca75d26fec05d8418eae077aa4"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/tone_convert.pyi",
+        "bytes":  1814,
+        "sha256":  "d1571a418396476cb26fff8a8f69711abf63b5233ddfce392c2fbcf3aec031e4"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/tone_sandhi.pyi",
+        "bytes":  594,
+        "sha256":  "d2f5295c8d56cfe6abc0974f9f102fc307205ef41024e2859eb483dc7413f66a"
+    },
+    {
+        "path":  "_internal/pypinyin/contrib/uv.pyi",
+        "bytes":  389,
+        "sha256":  "e93e29c1806572f54d5c9bef1b95c4e96ebded24e4e5b828449f1ba80a43424b"
+    },
+    {
+        "path":  "_internal/pypinyin/converter.pyi",
+        "bytes":  5635,
+        "sha256":  "40cd983513a797b2d06b4b1f605e6d9e2498f86f2aacda2b78feef26c45988a6"
+    },
+    {
+        "path":  "_internal/pypinyin/core.pyi",
+        "bytes":  3400,
+        "sha256":  "1bcef54c36ff2f4ffaf8dbc336769d7e5e7bcd8a6c4e1a3120e396f33a7e5e38"
+    },
+    {
+        "path":  "_internal/pypinyin/exceptions.pyi",
+        "bytes":  228,
+        "sha256":  "0a2355fef53cd7216a512fe483234bd6857614117f5ba56bde1b457bd886ce0f"
+    },
+    {
+        "path":  "_internal/pypinyin/phonetic_symbol.pyi",
+        "bytes":  136,
+        "sha256":  "a9a31a1c97d3da011415c98eb3f1b3d52056731f63ddd6d1f9f6373d6054428f"
+    },
+    {
+        "path":  "_internal/pypinyin/phrases_dict.json",
+        "bytes":  2545585,
+        "sha256":  "a45ff140a6b631ca9c82127b280a2f414e0aba6bb2824a0e9d1e77fff359c665"
+    },
+    {
+        "path":  "_internal/pypinyin/phrases_dict.pyi",
+        "bytes":  94,
+        "sha256":  "9a9e68169fb350ccc1a616df9a943e8a70e565daf07b1e813ffc66dbcd865f10"
+    },
+    {
+        "path":  "_internal/pypinyin/pinyin_dict.json",
+        "bytes":  788780,
+        "sha256":  "5f294c01e6c6c0a1c8e329c79335a3f8e0b27d06bf1de7a99244b765892d1e5b"
+    },
+    {
+        "path":  "_internal/pypinyin/pinyin_dict.pyi",
+        "bytes":  74,
+        "sha256":  "905ab44cb10c290b940314fd53a64bdfa55a74ca5a2746d36c8b071423ec4d84"
+    },
+    {
+        "path":  "_internal/pypinyin/py.typed",
+        "bytes":  0,
+        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+        "path":  "_internal/pypinyin/runner.pyi",
+        "bytes":  241,
+        "sha256":  "7a8102359fe134a9a855b431002b081581dafbd18601e83c2324aee35429ba31"
+    },
+    {
+        "path":  "_internal/pypinyin/seg/mmseg.pyi",
+        "bytes":  833,
+        "sha256":  "08b980a5cd4781342ff6ccc94b03a9de78d9a0bb1d19111205fde5ff63ddda9f"
+    },
+    {
+        "path":  "_internal/pypinyin/seg/simpleseg.pyi",
+        "bytes":  186,
+        "sha256":  "b010392b5091587199697e4c7aecabf1f0555886b0d31e1e0aa154251048a1e2"
+    },
+    {
+        "path":  "_internal/pypinyin/standard.pyi",
+        "bytes":  306,
+        "sha256":  "2cf2e8b9c4e3c631be8a93a21e5bfc7f2331fc088bba5e5fe3eca5e919e58a97"
+    },
+    {
+        "path":  "_internal/pypinyin/style/__init__.pyi",
+        "bytes":  619,
+        "sha256":  "b330d646e91a2529341477d08835fcf0296cb118012065d2a3fea127e58bdde3"
+    },
+    {
+        "path":  "_internal/pypinyin/style/_constants.pyi",
+        "bytes":  421,
+        "sha256":  "9472e930e49f7f11d99332a1cd1c7868560873637e780ce0ba2fc2c98199ec54"
+    },
+    {
+        "path":  "_internal/pypinyin/style/_tone_convert.pyi",
+        "bytes":  1813,
+        "sha256":  "9fcdd8fa11bfc8d89f45126af4c1b256292fa47a34bef72434d0faa0c88caccb"
+    },
+    {
+        "path":  "_internal/pypinyin/style/_tone_rule.pyi",
+        "bytes":  128,
+        "sha256":  "87811c1174522d1bf55f4bc07dc772c7c648cdf0e1cecb9b1f2da5e8bdb73f99"
+    },
+    {
+        "path":  "_internal/pypinyin/style/_utils.pyi",
+        "bytes":  304,
+        "sha256":  "31a403bfdfce468468f69f91e4de864c056f60cf41cdd61c3125ccddc38871f5"
+    },
+    {
+        "path":  "_internal/pypinyin/style/bopomofo.pyi",
+        "bytes":  435,
+        "sha256":  "4c1db946064dbeb449b1762ce474ac857c4665bd0506a80ee7621cb67356d8b4"
+    },
+    {
+        "path":  "_internal/pypinyin/style/braille_mainland.pyi",
+        "bytes":  543,
+        "sha256":  "e99870e87f3800b445d54985cf1e6a94c0cc962f6e5c55453dec779e52d22953"
+    },
+    {
+        "path":  "_internal/pypinyin/style/cyrillic.pyi",
+        "bytes":  440,
+        "sha256":  "274a62c6ccf516987ece866ecef63dffef21df001a29561402a653bb29eea873"
+    },
+    {
+        "path":  "_internal/pypinyin/style/finals.pyi",
+        "bytes":  389,
+        "sha256":  "4c9bc2f394c1ead14c1e2258c24284be646e729bdc47238b9843886813c476cf"
+    },
+    {
+        "path":  "_internal/pypinyin/style/gwoyeu.pyi",
+        "bytes":  283,
+        "sha256":  "8458b786b538abb43b7940322b8cef0eb2ea3f85e2e9086272f0ab0f988a0099"
+    },
+    {
+        "path":  "_internal/pypinyin/style/initials.pyi",
+        "bytes":  85,
+        "sha256":  "cb651ddce746db9310d459995e3d48436f1d6a7118168e5ba290adbe8649ea4c"
+    },
+    {
+        "path":  "_internal/pypinyin/style/others.pyi",
+        "bytes":  244,
+        "sha256":  "6d859c922defbfc2d818e6958ea38390dff4b37a7fee42312681226dfa9c7ac2"
+    },
+    {
+        "path":  "_internal/pypinyin/style/tone.pyi",
+        "bytes":  297,
+        "sha256":  "f2bd7d5bce89bb754bd26a2937f257acacb017596f087e48a091ef9757a2a6ef"
+    },
+    {
+        "path":  "_internal/pypinyin/style/wadegiles.pyi",
+        "bytes":  292,
+        "sha256":  "1fd9462ac7d34e2a310f3552a2fa86f2a5f4260c6c6d631a3c624f12eab9f7e6"
+    },
+    {
+        "path":  "_internal/pypinyin/tools/toneconvert.pyi",
+        "bytes":  430,
+        "sha256":  "c388473a0d9f3b9e1d76c2f52ac355f99d459f10d213edcb886f9205f7531535"
+    },
+    {
+        "path":  "_internal/pypinyin/utils.pyi",
+        "bytes":  241,
+        "sha256":  "9bfc99a2375aaaf810c8632efec3152974b15e4781559b8fffc768d0c6d93b14"
+    },
+    {
+        "path":  "_internal/python312.dll",
+        "bytes":  6971904,
+        "sha256":  "960a3863c9cb129f946bbc28947ebcdc9ebaec16afee2c10764bdfed61416556"
+    },
+    {
+        "path":  "_internal/select.pyd",
+        "bytes":  18944,
+        "sha256":  "b241c5d193e5723ac56a2ac070123c78f5c515fb5ee252aca57b0874257e5b1b"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/INSTALLER",
+        "bytes":  4,
+        "sha256":  "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/LICENSE",
+        "bytes":  11358,
+        "sha256":  "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/METADATA",
+        "bytes":  4648,
+        "sha256":  "6a7b90effee1e09d5b484cdf7232016a43e2d9cc9543bcbb8e494b1ec05e1f59"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/RECORD",
+        "bytes":  2518,
+        "sha256":  "0d8d3c6eeb9ebbe86cac7d60861552433c329da9ea51248b61d02be2e5e64030"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/REQUESTED",
+        "bytes":  0,
+        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/top_level.txt",
+        "bytes":  19,
+        "sha256":  "08eddf0fdcb29403625e4acca38a872d5fe6a972f6b02e4914a82dd725804fe0"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info/WHEEL",
+        "bytes":  91,
+        "sha256":  "9a0b8c95618c5fe5479cca4a3a38d089d228d6cb1194216ee1ae26069cf5b363"
+    },
+    {
+        "path":  "_internal/setuptools/_vendor/jaraco/text/Lorem ipsum.txt",
+        "bytes":  1335,
+        "sha256":  "37fedcffbf73c4eb9f058f47677cb33203a436ff9390e4d38a8e01c9dad28e0b"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/__init__.py",
+        "bytes":  2896,
+        "sha256":  "74c8f6dfdaa22d49b2e7fa7f4254e6febc63279f49f41466176af764e23a8634"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/__main__.py",
+        "bytes":  1241,
+        "sha256":  "5457c80fcf576709b69c6430394ecc2635636ecc703004af815e062fb4e045cc"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/_info.py",
+        "bytes":  639,
+        "sha256":  "56386fef3aec9ab3a7abf38c0266035d4dbdaa3e11214a992d707038d6cf1df6"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/cli.py",
+        "bytes":  3822,
+        "sha256":  "20f6334fb83217f0c6771206600dcfbe38855d36e8d58266db24e355fd6354a0"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/display.py",
+        "bytes":  1109,
+        "sha256":  "eaa5ccd8c6dea24a8991669d05c1dd07ace9b7516d2066908600a154e9d47962"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/include/sherpa-onnx/c-api/c-api.h",
+        "bytes":  164860,
+        "sha256":  "41d830b46ff80abab93b00bf728128881db2b332e0e669c3f580677d09e60ce5"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/include/sherpa-onnx/c-api/cxx-api.h",
+        "bytes":  57365,
+        "sha256":  "7fb268fd32f18757b6fb2f218b8f9b6b6262a7a32f063b39f71b380f23eebf19"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/keyword_spotter.py",
+        "bytes":  5462,
+        "sha256":  "ff4c1df3f46651259fddd2015083cab2fd50120d80c4a1b00d77d65f8ce0233a"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/_sherpa_onnx.cp312-win_amd64.pyd",
+        "bytes":  5573632,
+        "sha256":  "a16ae3400094ba0b3854061f4f33563111884d76376b194e354ab0a1246f9ea4"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/onnxruntime.dll",
+        "bytes":  16036864,
+        "sha256":  "756c938b0f2d14c45c7ad469c6429041d7e905ee6c6ad6049aa67ce937567e97"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/sherpa-onnx-c-api.dll",
+        "bytes":  4457472,
+        "sha256":  "54b4c4f267566e35e356e8b3fa619118a8c0df42c93b5691c0213e4427a456ef"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/sherpa-onnx-c-api.lib",
+        "bytes":  74006,
+        "sha256":  "97211faa195218e689e0c8025039a94e94383a32ae5b8cb39a84a16455795277"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/sherpa-onnx-cxx-api.dll",
+        "bytes":  237056,
+        "sha256":  "c5a56f4019844652042050ecbaa30a5bbcb42ea50a6b20ff3364a49c5daaad7b"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/lib/sherpa-onnx-cxx-api.lib",
+        "bytes":  163472,
+        "sha256":  "6700d3f9a8e07e249609e2c1714ad7f82fa5de80f5b8612259481499752f83ff"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/offline_recognizer.py",
+        "bytes":  62384,
+        "sha256":  "edf489d391a3da32f0b08df4cb23e59868658580a81183816964dd61bc75cbce"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/online_recognizer.py",
+        "bytes":  39380,
+        "sha256":  "542b81166c6948929167509602baf2a6ef11394f95e86b870e57d65f013cce38"
+    },
+    {
+        "path":  "_internal/sherpa_onnx/utils.py",
+        "bytes":  6783,
+        "sha256":  "251309d8b41fe8d2baa1dbf4ac6edf4fc6ac1fa65a9e3ab7638c41bf0951eae0"
+    },
+    {
+        "path":  "_internal/sherpa_onnx_core-1.13.2.dist-info/INSTALLER",
+        "bytes":  4,
+        "sha256":  "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+        "path":  "_internal/sherpa_onnx_core-1.13.2.dist-info/METADATA",
+        "bytes":  532,
+        "sha256":  "823a53255e41172078d9a341cb8105f9cdf48692dfec64d3aa96357303cf55c2"
+    },
+    {
+        "path":  "_internal/sherpa_onnx_core-1.13.2.dist-info/RECORD",
+        "bytes":  1869,
+        "sha256":  "73452feda25fc51e7a7579d7423ddcd59182c14e07920ab113225d730638c49e"
+    },
+    {
+        "path":  "_internal/sherpa_onnx_core-1.13.2.dist-info/top_level.txt",
+        "bytes":  12,
+        "sha256":  "12b348b3de981ed4aeaa2d2c76d1b57faf2861e0aaaca20ccc3a80a1b0764a8c"
+    },
+    {
+        "path":  "_internal/sherpa_onnx_core-1.13.2.dist-info/WHEEL",
+        "bytes":  98,
+        "sha256":  "766adf79d1e6bd24bb27c12c73a58e49492977c22823caa4d010e9e8cba10afd"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/entry_points.txt",
+        "bytes":  56,
+        "sha256":  "756136f401963456664e5edad4f1164e85b00ca0f74e35e5f2e967a3d58ac75b"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/INSTALLER",
+        "bytes":  4,
+        "sha256":  "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/licenses/LICENSE",
+        "bytes":  11560,
+        "sha256":  "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/METADATA",
+        "bytes":  50076,
+        "sha256":  "2ac46665dcf2e63f556bd0d31b89cae13cc5154d38cd47f6d0271f017db7f241"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/RECORD",
+        "bytes":  1884,
+        "sha256":  "ae1da4491dfd8f5b92f1712e5007f16d5c9beba7025898008955346ab3f5c730"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/REQUESTED",
+        "bytes":  0,
+        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/top_level.txt",
+        "bytes":  25,
+        "sha256":  "77e18a1297fed2dd074fa9d4eb7174bdb6d5ea9da62700329edfdc393b7ea777"
+    },
+    {
+        "path":  "_internal/sherpa_onnx-1.13.2.dist-info/WHEEL",
+        "bytes":  101,
+        "sha256":  "ad1e507ec59c665de6adae409920fb15dd1dcd0c59de51c2a43a3bd0891f0cae"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/INSTALLER",
+        "bytes":  4,
+        "sha256":  "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/licenses/LICENSE",
+        "bytes":  1063,
+        "sha256":  "b6eea21bbafbaf7a2177e492f1be6b5efc6f4e708b1980773de51cdaa52f8211"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/METADATA",
+        "bytes":  1637,
+        "sha256":  "430175d25fd6bbff6a4de6d28d6688e55abbc6d0b881991953a9b5d6e10f3048"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/RECORD",
+        "bytes":  1325,
+        "sha256":  "26077f044ca29c18197d15456093333cb50d21ba4bdbb3c5294f28871d3911d3"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/REQUESTED",
+        "bytes":  0,
+        "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/top_level.txt",
+        "bytes":  43,
+        "sha256":  "e31ffd20949631be92b5b1c17be8db1d60b57097ffba7850c3168c060847fcbe"
+    },
+    {
+        "path":  "_internal/sounddevice-0.5.2.dist-info/WHEEL",
+        "bytes":  97,
+        "sha256":  "8e90fd6ebdf4161b8dad3a15e380294ded956cbc9941b8735b047c9ee99691f7"
+    },
+    {
+        "path":  "_internal/unicodedata.pyd",
+        "bytes":  1126400,
+        "sha256":  "c3e10e814e4e36b5f6f66231ccbb80edd6fd219994406b383ecfa44d57efc537"
+    },
+    {
+        "path":  "_internal/VCRUNTIME140.dll",
+        "bytes":  124544,
+        "sha256":  "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+        "path":  "_internal/VCRUNTIME140_1.dll",
+        "bytes":  49792,
+        "sha256":  "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f"
+    },
+    {
+        "path":  "01-doctor.cmd",
+        "bytes":  187,
+        "sha256":  "2abd4cb5fb38ec8726d46e9d44c12840157b9305abcf028fd5945cfa41141913"
+    },
+    {
+        "path":  "02-probe-mic.cmd",
+        "bytes":  462,
+        "sha256":  "d1089f231708c02434de18778d736563fae2cefae3054c8cf81283f65e09b660"
+    },
+    {
+        "path":  "03-run-live.cmd",
+        "bytes":  432,
+        "sha256":  "52120dd31a20856f76637bd824c86d9ff5dad893ff90ed5ad0af811de585da01"
+    },
+    {
+        "path":  "04-offline-demo.cmd",
+        "bytes":  219,
+        "sha256":  "647c3648493d5fbb97ffe01a21105901d8247c1ce1ab29f62ab0bd9515082b93"
+    },
+    {
+        "path":  "05-web-manager.cmd",
+        "bytes":  1690,
+        "sha256":  "0f2655b536edc0ee3e48d25c9790d8cd1ce6d4d1535d0af03623b329cf54f67f"
+    },
+    {
+        "path":  "06-enable-lan-access.cmd",
+        "bytes":  855,
+        "sha256":  "6b553a229bc6a8e8c8fccdc2116d37d14c7746fbb18e67f47fdccd7fedb1bfa1"
+    },
+    {
+        "path":  "config/default.json",
+        "bytes":  1506,
+        "sha256":  "5427656a7055060ab14b5ad07d9e25e535cbf42c61936c6bf97c825912dfdca0"
+    },
+    {
+        "path":  "G10-C-FIELD-TEST.md",
+        "bytes":  3771,
+        "sha256":  "49b51e176549231db92ec667347cdd8e5b96a076cea2f85ff959ba917ae1b92b"
+    },
+    {
+        "path":  "KWS-WAKE-NOTIFY-API.md",
+        "bytes":  367,
+        "sha256":  "f3090653e1f999982b61fe639f2159825b9fba6afd9f320a952c6311ae3b6793"
+    },
+    {
+        "path":  "models/asr/export-onnx.py",
+        "bytes":  5905,
+        "sha256":  "c97f6a33f9d7135efd4d55b3e24e288c47d925f3b4f04b8b3418c2821c0a89ce"
+    },
+    {
+        "path":  "models/asr/LICENSE",
+        "bytes":  71,
+        "sha256":  "221c6df10b0931a5629adad671ea48fb7747e034c414b6d2bfa275bc3dd4ea17"
+    },
+    {
+        "path":  "models/asr/model.int8.onnx",
+        "bytes":  239233841,
+        "sha256":  "c71f0ce00bec95b07744e116345e33d8cbbe08cef896382cf907bf4b51a2cd51"
+    },
+    {
+        "path":  "models/asr/README.md",
+        "bytes":  104,
+        "sha256":  "763991a00edaea534ab36bf1b7cf89e61e911666dcfabbba71f91f9f7c593a63"
+    },
+    {
+        "path":  "models/asr/test_wavs/en.wav",
+        "bytes":  228908,
+        "sha256":  "eb1eb008904465b74c304aad8342e8c7d3c6e61ffe9f66adcaca9cf0f76a93f4"
+    },
+    {
+        "path":  "models/asr/test_wavs/ja.wav",
+        "bytes":  230444,
+        "sha256":  "460bd8dccb0d2a5f4e29c628f837be4082d13defc64c3fc21dd1b6bb0e119095"
+    },
+    {
+        "path":  "models/asr/test_wavs/ko.wav",
+        "bytes":  147500,
+        "sha256":  "0dc797a5c81ed30fc339d91f3da718ab02854e17ffa37cb93c4c039ac5c6bb9c"
+    },
+    {
+        "path":  "models/asr/test_wavs/yue.wav",
+        "bytes":  164780,
+        "sha256":  "0960b2db54ae202071d250e6462fbf74a3c863f0e3e7f01273e4939c996875a0"
+    },
+    {
+        "path":  "models/asr/test_wavs/zh.wav",
+        "bytes":  178988,
+        "sha256":  "b77f1794fe374a0ba1ee1dc458bfaf9349496cbbfc32780c50ba3c5a7ad8e373"
+    },
+    {
+        "path":  "models/asr/tokens.txt",
+        "bytes":  315894,
+        "sha256":  "f449eb28dc567533d7fa59be34e2abca8784f771850c78a47fb731a31429a1dc"
+    },
+    {
+        "path":  "models/kws/decoder-epoch-12-avg-2-chunk-16-left-64.onnx",
+        "bytes":  675349,
+        "sha256":  "fb581d6734511676e246e0dff2fea01b31b0913176cb3ca64576dbab0a177774"
+    },
+    {
+        "path":  "models/kws/encoder-epoch-12-avg-2-chunk-16-left-64.int8.onnx",
+        "bytes":  3990821,
+        "sha256":  "4ded45b30961270f2a9a64bede4569b324c36d4f3a772c1b35bb70a244150675"
+    },
+    {
+        "path":  "models/kws/encoder-epoch-12-avg-2-chunk-16-left-64.onnx",
+        "bytes":  11515119,
+        "sha256":  "6bb9c4ca657c73aba155fd1f23a025567a86bfce19de7ea761ebc58d76963a13"
+    },
+    {
+        "path":  "models/kws/joiner-epoch-12-avg-2-chunk-16-left-64.int8.onnx",
+        "bytes":  65242,
+        "sha256":  "f79760052b87239e325f0567c752ad3130b30d92effb847d4307743c20c59a24"
+    },
+    {
+        "path":  "models/kws/keywords.txt",
+        "bytes":  286,
+        "sha256":  "46de8c6834da501b0a2e39a2691b17fd74ea707930dd30fbc7cc69b3d396b93f"
+    },
+    {
+        "path":  "models/kws/keywords_raw.txt",
+        "bytes":  101,
+        "sha256":  "75b5846317e6c90d37da2c8ba5d05e6f5688eca20c7bca1ad4d0372795339ace"
+    },
+    {
+        "path":  "models/kws/notes.md",
+        "bytes":  217,
+        "sha256":  "c74db63ed5db4028ef65f0cd4cd55633f1532bb642ce1f4e1224c9457c3c73c4"
+    },
+    {
+        "path":  "models/kws/README.md",
+        "bytes":  767,
+        "sha256":  "dd0ec68b5d9ee736f016fc982078bd3cdbccc69057e9910bdd45580992d13367"
+    },
+    {
+        "path":  "models/kws/test_wavs/0.wav",
+        "bytes":  179646,
+        "sha256":  "668bf8df51a10027b84d5d8816a1ce11ae93545538dc05cfe2aa6811d399c250"
+    },
+    {
+        "path":  "models/kws/test_wavs/1.wav",
+        "bytes":  164976,
+        "sha256":  "30edbabea84ca4c076f5b43bb44495f436f6711319c32a200d3fc5c67c1fee1d"
+    },
+    {
+        "path":  "models/kws/test_wavs/2.wav",
+        "bytes":  144856,
+        "sha256":  "04a579c23bdd6de049814f1cbfb470d735d7747ba37eb0a92d813c89da942706"
+    },
+    {
+        "path":  "models/kws/test_wavs/3.wav",
+        "bytes":  257006,
+        "sha256":  "710e79fb3450042be50bb2f6432a2a549b53577aea041a577e53a926fcabb614"
+    },
+    {
+        "path":  "models/kws/test_wavs/4.wav",
+        "bytes":  147216,
+        "sha256":  "d46ca3a2ce52b5059f3d84e2cfdc62907e8579faa7078b1becaea614dd41b35d"
+    },
+    {
+        "path":  "models/kws/test_wavs/5.wav",
+        "bytes":  132938,
+        "sha256":  "55321b6d1ab4bd9a16928957a52cf943b2ae864543cca7f39e9844b4889e9bb8"
+    },
+    {
+        "path":  "models/kws/test_wavs/6.wav",
+        "bytes":  113518,
+        "sha256":  "f5da5689f1960431a53855d7fbe78c9ab0b73e5495ffba631cd43458225d9039"
+    },
+    {
+        "path":  "models/kws/test_wavs/test_keywords.txt",
+        "bytes":  222,
+        "sha256":  "6af1addaeb80ddb6dc8576e11dcb5a4d17bc02629e6561ca6b2aadb5ec05e27d"
+    },
+    {
+        "path":  "models/kws/tokens.txt",
+        "bytes":  1627,
+        "sha256":  "72316508d9119696145abc6f1f8cdc46287535c34e5ce7e595f845cb1499cf2e"
+    },
+    {
+        "path":  "models/models.lock.json",
+        "bytes":  1385,
+        "sha256":  "864016699f8e19757261ea12e7a9a32255805bf64bd11ec254e63f148c31830d"
+    },
+    {
+        "path":  "models/vad/silero_vad.onnx",
+        "bytes":  643854,
+        "sha256":  "9e2449e1087496d8d4caba907f23e0bd3f78d91fa552479bb9c23ac09cbb1fd6"
+    },
+    {
+        "path":  "README.md",
+        "bytes":  7558,
+        "sha256":  "2fb5ffa735c55f786d28936e4daf8e1629402bd40ec501e3cf9e81d2f091d9c2"
+    },
+    {
+        "path":  "testdata/demo-nihao-side-ai.wav",
+        "bytes":  355136,
+        "sha256":  "4d045927c89f4631e61b245c1073ec637def6e541920517fe8647b487f841577"
+    },
+    {
+        "path":  "THIRD_PARTY_NOTICES.md",
+        "bytes":  1729,
+        "sha256":  "e44ee5b43ce888c2b18ab57a1dd2388af802dd6d6e1f42ffd8d65fa984a8b47b"
+    },
+    {
+        "path":  "VoiceGateway-G10C-Test.exe",
+        "bytes":  5841260,
+        "sha256":  "f3ef838983f752cefc2ae4af31dad9d16ea4b156a6c4d492ed21002255ede09e"
+    },
+    {
+        "path":  "VoiceGateway-WebUI.exe",
+        "bytes":  23241812,
+        "sha256":  "d6874a2ee4580611587d0cc854e4dd3e4221e05ff2ccf94ebfe73adac57e2edc"
+    },
+    {
+        "path":  "WEB-MANAGER-README.md",
+        "bytes":  7272,
+        "sha256":  "0bc911c466323748e91b05198f6376860190e98860da862ab1778ced1ee3c7cf"
+    },
+    {
+        "path":  "webui/bin/VoiceGateway.AudioControl.exe",
+        "bytes":  14336,
+        "sha256":  "1047fe635dac648ee4f383b9d9c9ba020c1f0b45c520fec6abd2c9bb5f370b5e"
+    },
+    {
+        "path":  "webui/static/app.js",
+        "bytes":  31297,
+        "sha256":  "17b2ef4c28c0b2edd83d3def7afad02543491ff5addbbd1825fce09c8a32ba83"
+    },
+    {
+        "path":  "webui/static/index.html",
+        "bytes":  13050,
+        "sha256":  "d2506f549be32507f8f87c14109d7a1e0512c3eadc92cf8c86b51fbeefc673e1"
+    },
+    {
+        "path":  "webui/static/styles.css",
+        "bytes":  22805,
+        "sha256":  "42bfebfc2dccc11e94120687d6f78bfcef9e2dff764a3c576ff2bbef8a0a05a0"
+    }
+]

@@ -1,0 +1,44 @@
+# Gradle/Android generated output and per-machine caches
+.gradle/
+.gradle-user/
+**/build/
+local.properties
+local.secrets.properties
+.idea/
+*.iml
+.kotlin/
+.cxx/
+.externalNativeBuild/
+
+# Local credentials/signing material
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Distributable binaries live in the delivery package / GitLab packages, not Git
+*.apk
+*.aab
+*.idsig
+*.bundle
+*.zip
+
+# Local review material and scratch files
+.prd-review/
+.codex/
+.agents/
+Start.txt
+*.log
+*.hprof
+*.tmp
+Thumbs.db
+.DS_Store
+
+# Keep vendor SDKs and Gradle Wrapper; these are required build inputs.
+!app/libs/*.aar
+!gradle/wrapper/gradle-wrapper.jar

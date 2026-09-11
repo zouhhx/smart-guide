@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="34dp" />
+            <solid android:color="@color/button_active_shadow" />
+        </shape>
+    </item>
+
+    <item android:bottom="5dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="34dp" />
+            <gradient
+                android:angle="270"
+                android:endColor="@color/button_active"
+                android:startColor="@color/button_active_top" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/accent_mint" />
+        </shape>
+    </item>
+</layer-list>
