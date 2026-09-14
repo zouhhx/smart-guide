@@ -1302,9 +1302,39 @@ class FileServer {
       const parsed = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
       if (req.method === 'GET') {
-        const items = knowledgeDb.listFaqs();
+        const faqAddedAt = item => Date.parse(
+          item?.createdAt
+          || item?.raw_json?.createdAt
+          || item?.raw_json?.frontmatter?.analysis_completed_at
+          || item?.raw_json?.frontmatter?.created_at
+          || item?.raw_json?.fileModifiedAt
+          || item?.updated_at
+          || 0,
+        ) || 0;
+        const query = String(parsed.searchParams.get('q') || '').trim().toLocaleLowerCase();
+        const libraryOnly = parsed.searchParams.get('library') === '1';
+        const state = String(parsed.searchParams.get('state') || 'all');
+        let items = knowledgeDb.listFaqs()
+          .filter(item => !libraryOnly || !['reviewing', 'rejected'].includes(String(item?.status || '').toLowerCase()))
+          .filter(item => !query || [item?.question, item?.sourceFile].some(value => String(value || '').toLocaleLowerCase().includes(query)))
+          .filter(item => state === 'all'
+            || (state === 'published'
+              ? item?.enabled !== false && String(item?.status || 'published') === 'published'
+              : item?.enabled === false || String(item?.status || 'published') !== 'published'))
+          .map((item, index) => ({ item, index }))
+          .sort((left, right) => faqAddedAt(right.item) - faqAddedAt(left.item) || right.index - left.index)
+          .map(entry => entry.item);
+        const total = items.length;
+        const requestedPageSize = Number(parsed.searchParams.get('pageSize'));
+        const pageSize = Number.isFinite(requestedPageSize) && requestedPageSize > 0
+          ? Math.max(1, Math.min(100, Math.floor(requestedPageSize)))
+          : 0;
+        const totalPages = pageSize ? Math.max(1, Math.ceil(total / pageSize)) : 1;
+        const requestedPage = Math.max(1, Math.floor(Number(parsed.searchParams.get('page')) || 1));
+        const page = Math.min(requestedPage, totalPages);
+        if (pageSize) items = items.slice((page - 1) * pageSize, page * pageSize);
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-        res.end(JSON.stringify({ ok: true, items, total: items.length, serverTime: Date.now() }));
+        res.end(JSON.stringify({ ok: true, items, total, page, pageSize: pageSize || total, totalPages, serverTime: Date.now() }));
         return;
       }
 
@@ -1317,13 +1347,11 @@ class FileServer {
           res.end(JSON.stringify({ ok: false, error: 'ids are required' }));
           return;
         }
-        if (ids.some(id => knowledgeDb.isReadOnlyFaq(id))) {
-          res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
-          res.end(JSON.stringify({ ok: false, error: 'OBSIDIAN_FAQ_READ_ONLY' }));
-          return;
-        }
         if (payload.action === 'delete') {
-          changed = qaStore.removeMany(ids);
+          const visibleItems = new Map(knowledgeDb.listFaqs().map(item => [String(item.id), item]));
+          const imported = ids.filter(id => knowledgeDb.isReadOnlyFaq(id)).map(id => visibleItems.get(id)).filter(Boolean);
+          const editableIds = ids.filter(id => !knowledgeDb.isReadOnlyFaq(id));
+          changed = qaStore.removeMany(editableIds) + qaStore.hideMany(imported);
         } else if (payload.action === 'enable') {
           changed = qaStore.updateMany(ids, { enabled: true });
         } else if (payload.action === 'disable') {
@@ -1363,8 +1391,11 @@ class FileServer {
       if (req.method === 'DELETE') {
         const id = parsed.searchParams.get('id');
         if (knowledgeDb.isReadOnlyFaq(id)) {
-          res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
-          res.end(JSON.stringify({ ok: false, error: 'OBSIDIAN_FAQ_READ_ONLY' }));
+          const imported = knowledgeDb.listFaqs().find(item => String(item.id) === String(id));
+          const removed = imported ? qaStore.hideMany([imported]) > 0 : false;
+          await this._syncKnowledgeQuietly();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: true, removed, serverTime: Date.now() }));
           return;
         }
         const removed = qaStore.remove(id);
@@ -1753,8 +1784,22 @@ class FileServer {
   }
 
   async _handleSpeechInterrupt(req, res) {
+    const startedAt = Date.now();
+    let context = {};
+    // This one-shot phone request deliberately cannot retry. Do not leave an
+    // idle pooled connection that can be closed just as the next press uses it.
+    res.shouldKeepAlive = false;
+    res.on?.('close', () => {
+      if (!res.writableFinished) console.warn('[SpeechInterruptHTTP] ' + JSON.stringify({
+        ...context, event: 'response-closed', elapsedMs: Date.now() - startedAt,
+      }));
+    });
     const respond = (status, body) => {
-      res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+      console.log('[SpeechInterruptHTTP] ' + JSON.stringify({
+        ...context, event: 'result', httpStatus: status, status: body.status || body.error,
+        delivered: body.delivered, elapsedMs: Date.now() - startedAt,
+      }));
+      res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Connection': 'close' });
       res.end(JSON.stringify(body));
     };
     try {
@@ -1768,18 +1813,33 @@ class FileServer {
       const target = String(Number(rawTarget));
       const requestId = typeof payload.requestId === 'string' ? payload.requestId.trim() : '';
       if (!requestId || requestId.length > 128) return respond(400, { ok: false, error: 'REQUEST_ID_REQUIRED' });
+      context = { target, requestId };
+      console.log('[SpeechInterruptHTTP] ' + JSON.stringify({ ...context, event: 'received' }));
       if (!deviceManager.getByScreenNumber(Number(target))) return respond(404, { ok: false, error: 'SCREEN_NOT_FOUND', target });
       const { messageRouter } = await import('../router/MessageRouter.js');
       const { ttsConfigStore } = await import('../tts/TtsConfigStore.js');
-      const result = await speechInterruption.runOnce(target, requestId, () => {
+      const result = await speechInterruption.runOnce(target, requestId, async () => {
         const device = deviceManager.getByScreenNumber(Number(target));
         if (!String(device?.version || '').includes('speech-interrupt-v1')) {
           return { ok: false, status: 'CLIENT_UPGRADE_REQUIRED', target, requestId, httpStatus: 409 };
         }
-        if (ttsConfigStore.get().provider !== 'qwen3') {
-          return { ok: false, status: 'TTS_PROVIDER_UNSUPPORTED', target, requestId, httpStatus: 409 };
-        }
         const stopped = messageRouter.interruptSpeech(target, requestId);
+        const state = ttsConfigStore.get();
+        if (state.provider !== 'qwen3' && state.avatarEnabled) {
+          const { avatarTargetCoordinator } = await import('../avatar/AvatarTargetCoordinator.js');
+          try {
+            const avatarStop = await avatarTargetCoordinator.interrupt(target);
+            if (!avatarStop.ok) throw new Error(avatarStop.error || 'avatar stop rejected');
+          } catch (error) {
+            console.warn('[SpeechInterruptHTTP] ' + JSON.stringify({
+              ...context, event: 'avatar-stop-failed', error: error.message,
+              cause: error.cause?.code, elapsedMs: Date.now() - startedAt,
+            }));
+            return { ok: false, status: 'AVATAR_STOP_UNCONFIRMED', target, requestId,
+              ...stopped, staleResultsBlocked: true, playbackConfirmed: false,
+              message: '数字人停止指令未确认', httpStatus: 503 };
+          }
+        }
         return {
           ok: stopped.delivered, status: stopped.delivered ? 'DISPATCHED' : 'TARGET_OFFLINE',
           target, requestId, ...stopped, staleResultsBlocked: true,
@@ -1882,7 +1942,8 @@ class FileServer {
       if (ttsState.avatarEnabled && payload.preview !== true) {
         const { avatarTargetCoordinator } = await import('../avatar/AvatarTargetCoordinator.js');
         const screenNumber = payload.screenNumber || payload.target;
-        const avatarResult = await avatarTargetCoordinator.say(text, screenNumber);
+        const avatarResult = await avatarTargetCoordinator.say(text, screenNumber, { signal: abort.signal });
+        abort.signal.throwIfAborted();
 
         const audio = await ttsService.createAvatarSilence(text);
         res.writeHead(200, { 'Content-Type': 'application/json' });

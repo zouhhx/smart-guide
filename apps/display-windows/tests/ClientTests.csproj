@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><UseWindowsForms>true</UseWindowsForms><ImplicitUsings>enable</ImplicitUsings><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+<ItemGroup><Compile Include="Program.cs"/><Compile Include="..\Controllers\StaOperationQueue.cs" Link="StaOperationQueue.cs"/><Compile Include="..\Controllers\PPTController.cs" Link="PPTController.cs"/></ItemGroup>
+<ItemGroup><Compile Include="..\Services\CommandDeduplicator.cs" Link="CommandDeduplicator.cs"/></ItemGroup>
+</Project>

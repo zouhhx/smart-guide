@@ -21,8 +21,9 @@ test('admin entry selects the upload-pool UI assets', () => {
   const activeBundle = fs.readFileSync(path.join(root, 'admin-ui', entry[1].slice(1)), 'utf8');
   assert.match(activeBundle, /function uaLocalVoiceSettings\(/, 'active UI must retain local voice settings');
   assert.match(activeBundle, /机器人现场补充/, 'active UI must retain robot teaching integration');
+  assert.match(activeBundle, /children:"批量删除"/, 'active UI must retain the latest FAQ batch controls');
   assert.match(indexHtml, /avatar-layout-v14\.css/);
-  assert.match(indexHtml, /upload-real-v12\.css\?v=robot-review-toggle-3/);
+  assert.match(indexHtml, /upload-real-v12\.css\?v=faq-batch-delete-1/);
 });
 
 test('upload modal submits a real batch queue and hands progress to the file list', () => {
@@ -260,6 +261,25 @@ test('FAQ library paginates using a page size derived from viewport height', () 
   assert.match(bundle, /visibleRows\.map/);
   assert.match(bundle, /每页 ",faqListPageSize," 条/);
   assert.match(uploadCss, /\.library-pagination\s*\{/);
+});
+
+test('FAQ library supports current-page batch selection, deletion, latest-first ordering and scoped search', () => {
+  assert.match(thumbnailBundle, /children:"批量删除"/);
+  assert.match(thumbnailBundle, /children:"全选当前页"/);
+  assert.match(thumbnailBundle, /删除所选（/);
+  assert.match(thumbnailBundle, /action:"delete",ids:selectedFaqIds/);
+  assert.match(thumbnailBundle, /搜索问题或关联展项/);
+  assert.match(thumbnailBundle, /function uaFaqPage/);
+  assert.match(thumbnailBundle, /X\.set\("q",I\.query\)/);
+  assert.match(thumbnailBundle, /X\.set\("library","1"\)/);
+  assert.match(thumbnailCss, /\.faq-heading-actions\s*\{/);
+  assert.match(thumbnailCss, /\.faq-batch-table \.faq-select-column\s*\{/);
+  assert.match(thumbnailCss, /\.faq-select-all-current\s*\{/);
+  assert.match(fileServerSource, /\[item\?\.question, item\?\.sourceFile\]/);
+  assert.match(fileServerSource, /pageSize/);
+  assert.match(fileServerSource, /faqAddedAt/);
+  assert.match(fileServerSource, /\.sort\(\(left, right\) => faqAddedAt\(right\.item\) - faqAddedAt\(left\.item\)/);
+  assert.match(fileServerSource, /qaStore\.hideMany\(imported\)/);
 });
 
 test('system settings separates client, digital-human and publishing responsibilities', () => {

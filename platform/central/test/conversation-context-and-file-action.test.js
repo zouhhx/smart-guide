@@ -183,6 +183,12 @@ test('current PPT introduction commands select the requested stored commentary t
     ['\u4ecb\u7ecd\u4e00\u4e0b\u5f53\u524dPPT', 'standard'],
     ['\u7cbe\u70bc\u7684\u4ecb\u7ecd\u4e00\u4e0b', 'concise'],
     ['\u8be6\u7ec6\u4ecb\u7ecd\u4e00\u4e0b', 'detailed'],
+    ['使用精简讲解词，介绍一下当前页面。', 'concise'],
+    ['简单介绍一下就可以。', 'concise'],
+    ['麻烦帮我简单介绍一下就行。', 'concise'],
+    ['30秒介绍', 'concise'],
+    ['使用标准版简单介绍当前页', 'standard'],
+    ['使用详细版简单介绍当前页', 'detailed'],
   ];
 
   for (const [text, expected] of cases) {

@@ -28,6 +28,9 @@ dotnet build ExhibitionClient.csproj -c Release
 
 ## 版本与验收
 
+**2026-09-14更新：当前为PPT断连恢复修复20。Release构建0错误、69条现有警告；tests/ClientTests.csproj回归通过。原数字人修复21可由vendor-avatar-patch重建，与已部署renderer哈希一致。详见仓库docs/RELEASE-20260914.md。下段15版为原整合记录。**
+
+
 本地已有 15 版打断修复的构建、部署和专项验证记录；整合快照未重新编译或与 28 当前运行程序匹配。最终上传前需收取当天新增修改、测试工程和发布说明，并记录实际源码/产物哈希。
 
 保留此前单次翻页、PPT 故障返回、旧播报取消等修复；大 PPT 性能仍有边界。不得用整理源码顺手覆盖现场、重启数字人或运行操作大屏的 UI 测试。

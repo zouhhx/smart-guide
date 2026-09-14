@@ -416,7 +416,7 @@ class KnowledgeDb {
     this._loadIndex();
     const overriddenIds = new Set(this.index.qaItems.map(item => text(item.id)));
     return [
-      ...this.index.qaItems.map(item => ({
+      ...this.index.qaItems.filter(item => item.raw_json?.deleted !== true).map(item => ({
         ...item,
         source: item.source || 'manual',
         sourceFile: this._faqAssociation(item),
@@ -452,7 +452,7 @@ class KnowledgeDb {
   _effectiveFaqItems() {
     const overriddenIds = new Set(this.index.qaItems.map(item => text(item.id)));
     return [
-      ...this.index.qaItems,
+      ...this.index.qaItems.filter(item => item.raw_json?.deleted !== true),
       ...this.index.obsidianQaItems.filter(item => !overriddenIds.has(text(item.id))),
     ];
   }
@@ -748,7 +748,9 @@ class KnowledgeDb {
     const tags = [...splitList(data.tags), ...domainTags];
     const sceneIds = splitList(data.scene || data.scenes || data.specials);
     const version = text(data.version || 'v1.0');
-    const raw = { frontmatter: data, file: relativePath };
+    let fileModifiedAt = '';
+    try { fileModifiedAt = fs.statSync(file).mtime.toISOString(); } catch {}
+    const raw = { frontmatter: data, file: relativePath, fileModifiedAt };
     const sourceFile = text(data.resource || data.resource_id || data.source_file || data.file || data.file_path || data['文件名称'] || relativePath);
     const result = { knowledgeObjects: [], qaItems: [], scenes: [], skipped: 0 };
 

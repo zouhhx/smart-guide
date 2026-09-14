@@ -46,7 +46,13 @@ public sealed class PPTController : IDisposable
             var started = Stopwatch.GetTimestamp();
             Logger.Info($"[PPT-Control] execute action={action} id={correlation} queueMs={Stopwatch.GetElapsedTime(received).TotalMilliseconds:F1}");
             var before = CurrentSlide;
-            var result = operation(token);
+            int result;
+            try { result = operation(token); }
+            catch (Exception ex) when (IsDisconnected(ex))
+            {
+                ForgetOfficeConnection();
+                throw new InvalidOperationException("PowerPoint 已退出或连接失效，请重新打开文件；旧操作不会重放。", ex);
+            }
             token.ThrowIfCancellationRequested();
             Volatile.Write(ref _slide, result);
             Logger.Info($"[PPT-Control] confirmed action={action} id={correlation} before={before} slide={result} changed={before != result} executionMs={Stopwatch.GetElapsedTime(started).TotalMilliseconds:F1} totalMs={Stopwatch.GetElapsedTime(received).TotalMilliseconds:F1}");
@@ -69,6 +75,14 @@ public sealed class PPTController : IDisposable
         var info = new FileInfo(path);
         if (!info.Exists) throw new FileNotFoundException("PPT 文件不存在", path);
         var stamp = $"{info.FullName}|{info.Length}|{info.LastWriteTimeUtc.Ticks}";
+        // Only probe Office on an explicit open, never during background rendering.
+        if (_application != null)
+        {
+            object documents = null;
+            try { documents = _application.Presentations; var ignored = (int)((dynamic)documents).Count; }
+            catch (Exception ex) when (IsDisconnected(ex)) { ForgetOfficeConnection(); }
+            finally { Release(documents); }
+        }
         if (_opened && string.Equals(_stamp, stamp, StringComparison.OrdinalIgnoreCase))
         {
             _show.Activate();
@@ -174,8 +188,33 @@ public sealed class PPTController : IDisposable
     }
     private void CloseDocument()
     {
-        if (_presentation != null && (_showWindow == IntPtr.Zero || IsWindow(_showWindow))) _presentation.Close();
+        try
+        {
+            if (_presentation != null && (_showWindow == IntPtr.Zero || IsWindow(_showWindow))) _presentation.Close();
+        }
+        catch (Exception ex) when (IsDisconnected(ex)) { ForgetOfficeConnection(); }
+        finally { ForgetDocument(); }
+    }
+    private static bool IsDisconnected(Exception error)
+    {
+        for (var ex = error; ex != null; ex = ex.InnerException)
+        {
+            if (ex.HResult is unchecked((int)0x800706BA) or unchecked((int)0x80010108)
+                or unchecked((int)0x800401FD)) return true;
+            // Dynamic COM dispatch can wrap the HRESULT in a binder exception.
+            if (ex.Message.Contains("0x800706BA", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("0x80010108", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("0x800401FD", StringComparison.OrdinalIgnoreCase)) return true;
+        }
+        return false;
+    }
+    private void ForgetOfficeConnection()
+    {
         ForgetDocument();
+        var application = (object)_application;
+        _application = null;
+        Release(application);
+        Logger.Warn("[PPT-Control] disconnected Office references discarded; next explicit open creates a fresh connection");
     }
     private void ForgetDocument()
     {
@@ -234,9 +273,11 @@ public sealed class PPTController : IDisposable
     private void ReleaseApplication()
     {
         if (_application == null) return;
-        dynamic documents = _application.Presentations;
-        try { if ((int)documents.Count == 0) _application.Quit(); }
-        finally { Release(documents); Release(_application); _application = null; }
+        object documents = null;
+        var application = (object)_application;
+        try { documents = ((dynamic)application).Presentations; if ((int)((dynamic)documents).Count == 0) ((dynamic)application).Quit(); }
+        catch (Exception ex) when (IsDisconnected(ex)) { }
+        finally { _application = null; Release(documents); Release(application); }
         Logger.Info("[PPT] 已释放空闲 Office 引用");
     }
     public void PresentWindow()

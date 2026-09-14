@@ -400,6 +400,7 @@ ${recentQuestions}
       pptFileName: String(event.pptFileName || '').slice(0, 500),
       pptTitle: String(event.pptTitle || '').slice(0, 300),
       pptSlideNumber: Number.isFinite(Number(event.pptSlideNumber)) ? Number(event.pptSlideNumber) : null,
+      commentaryLevel: String(event.commentaryLevel || '').slice(0, 30),
       qaScopedToCurrentUnit: event.qaScopedToCurrentUnit === true,
       qaCurrentUnitRequired: event.qaCurrentUnitRequired === true,
       finalRoute: String(event.finalRoute || '').slice(0, 80),
@@ -551,6 +552,13 @@ ${recentQuestions}
         return {
           type: action.type || action.action || 'unknown',
           target: action.target || 'all',
+          commentaryLevel: String(action.params?.commentaryLevel || '').slice(0, 30),
+          commentaryMode: String(action.params?.commentaryMode || '').slice(0, 30),
+          currentPptFileName: String(action.params?.currentPptFileName || '').slice(0, 500),
+          currentPptSlideNumber: Number.isFinite(Number(action.params?.currentPptSlideNumber))
+            ? Number(action.params.currentPptSlideNumber)
+            : null,
+          textPreview: String(action.params?.text || '').replace(/\s+/g, ' ').trim().slice(0, 160),
         };
       }),
       keywords: this._extractKeywords(question),

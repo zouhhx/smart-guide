@@ -43,6 +43,7 @@ export class QaStore {
       useCount: Number(input.useCount || 0),
       sourcePage: Number(input.sourcePage) || null,
       sourceFile,
+      deleted: input.deleted === true,
       updatedAt: now,
       createdAt: input.createdAt || now,
     };
@@ -89,6 +90,42 @@ export class QaStore {
     const removed = before - data.items.length;
     if (removed > 0) this._save(data);
     return removed;
+  }
+
+  hideMany(items = []) {
+    const data = this._load();
+    const now = new Date().toISOString();
+    let hidden = 0;
+
+    for (const input of items || []) {
+      const id = String(input?.id || '').trim();
+      if (!id) continue;
+      const index = data.items.findIndex(item => String(item.id) === id);
+      const source = String(input.source || 'manual').trim() || 'manual';
+      const sourceFile = String(input.sourceFile || '').trim()
+        || (source === 'robot-teaching' ? '机器人现场补充' : source === 'manual' ? '手动上传' : '');
+      const hiddenItem = {
+        ...(index >= 0 ? data.items[index] : {}),
+        id,
+        question: String(input.question || '').trim(),
+        answer: String(input.answer || '').trim(),
+        keywords: Array.isArray(input.keywords) ? input.keywords.map(String).filter(Boolean) : [],
+        enabled: false,
+        deleted: true,
+        source,
+        sourceFile,
+        sourcePage: Number(input.sourcePage) || null,
+        createdAt: input.createdAt || input.raw_json?.createdAt || now,
+        updatedAt: now,
+      };
+      if (!hiddenItem.question || !hiddenItem.answer) continue;
+      if (index >= 0) data.items[index] = hiddenItem;
+      else data.items.push(hiddenItem);
+      hidden += 1;
+    }
+
+    if (hidden > 0) this._save(data);
+    return hidden;
   }
 
   updateMany(ids = [], patch = {}) {

@@ -29,6 +29,13 @@ bundle = replaceOnce(
 
 bundle = replaceOnce(
   bundle,
+  'async function uaFallbackRules()',
+  'async function uaFaqPage(I={}){let X=new URLSearchParams;X.set("library","1"),X.set("page",String(Number(I.page||0)+1)),X.set("pageSize",String(Number(I.pageSize)||10)),I.query&&X.set("q",I.query),I.state&&I.state!=="全部状态"&&X.set("state",I.state==="已上架"?"published":"reviewing");let je=await p("/api/qa?"+X.toString()),ve=(Array.isArray(je.items)?je.items:[]).filter(U=>!String(U?.id||"").toLowerCase().endsWith("_faq_package")).map(U=>({...U,source:U.source||"exhibition-legacy",sourceFile:U.sourceFile||(U.source==="robot-teaching"?"机器人现场补充":U.source==="manual"?"手动上传":"")}));return{...je,items:ve}}async function uaFallbackRules()',
+  'server-paged FAQ library loader',
+);
+
+bundle = replaceOnce(
+  bundle,
   'Ae(ke.map(Ie=>I==="FAQ库"?[Ie.question,Ie.answer,(Ie.keywords||[]).slice(0,4).join("、")||"默认知识库",Ie.enabled?"已上架":"审核中"]:[Ie.name,Ie.answer,Ie.category||"通用",Ie.enabled!==false?"启用":"停用"]))',
   'Ae(ke.map(Ie=>I==="FAQ库"?[Ie.question,Ie.answer,Ie.sourceFile||(Ie.source==="robot-teaching"?"机器人现场补充":Ie.source==="manual"?"手动上传":"未关联展项"),Ie.enabled&&String(Ie.status||"published")==="published"?"已上架":"审核中"]:[Ie.name,Ie.answer,Ie.category||"通用",Ie.enabled!==false?"启用":"停用"]))',
   'FAQ association table rows',
@@ -54,6 +61,23 @@ bundle = replaceOnce(
   'Ne&&I!=="FAQ库"?(0,w.jsx)("input",{value:an[2],onChange:G=>Mn(an.map((ke,Ie)=>Ie===2?G.target.value:ke))}):(0,w.jsx)("div",{className:I==="FAQ库"?"readonly faq-association-readonly":"",children:Ce[2]||"手动上传"})',
   'read-only FAQ association detail',
 );
+
+const libraryStart = bundle.indexOf('function le({title:I,subtitle:X,rows:je,headers:ve,action:U,notify:xe}){');
+const libraryEnd = bundle.indexOf('function ue(', libraryStart);
+if (libraryStart < 0 || libraryEnd < 0) throw new Error('FAQ library: stable component anchors changed');
+const libraryComponent = `function le({title:I,subtitle:X,rows:je,headers:ve,action:U,notify:xe}){
+let[Re,Ae]=(0,l.useState)(je.map(G=>[...G])),[Be,_e]=(0,l.useState)([]),[be,Pe]=(0,l.useState)(I==="FAQ库"||I==="敏感口径"),[Ee,ln]=(0,l.useState)(""),[Ve,Se]=(0,l.useState)(false),[Qe,dn]=(0,l.useState)(""),[Ye,Sn]=(0,l.useState)("全部状态"),[Ue,qe]=(0,l.useState)(null),[Ne,Me]=(0,l.useState)(false),[Le,mn]=(0,l.useState)(false),[an,Mn]=(0,l.useState)(["","","","已上架"]),[faqListPage,setFaqListPage]=(0,l.useState)(0),[faqListPageSize,setFaqListPageSize]=(0,l.useState)(10),[faqTotal,setFaqTotal]=(0,l.useState)(0),[faqBatchMode,setFaqBatchMode]=(0,l.useState)(false),[selectedFaqIds,setSelectedFaqIds]=(0,l.useState)([]),[faqDeleteOpen,setFaqDeleteOpen]=(0,l.useState)(false),[faqDeleting,setFaqDeleting]=(0,l.useState)(false),[faqReload,setFaqReload]=(0,l.useState)(0);
+(0,l.useEffect)(()=>{if(I!=="FAQ库"&&I!=="敏感口径")return;let G=true,timer=null,load=()=>{Pe(true),(I==="FAQ库"?uaFaqPage({query:Qe.trim(),state:Ye,page:faqListPage,pageSize:faqListPageSize}):uaFallbackRules()).then(payload=>{if(!G)return;let ke=I==="FAQ库"?payload.items:payload;I==="FAQ库"&&setFaqTotal(Number(payload.total||0)),_e(ke),Ae(ke.map(Ie=>I==="FAQ库"?[Ie.question,Ie.answer,Ie.sourceFile||(Ie.source==="robot-teaching"?"机器人现场补充":Ie.source==="manual"?"手动上传":"未关联展项"),Ie.enabled&&String(Ie.status||"published")==="published"?"已上架":"审核中"]:[Ie.name,Ie.answer,Ie.category||"通用",Ie.enabled!==false?"启用":"停用"])),ln(""),setSelectedFaqIds([]),qe(null),Me(false),mn(false)}).catch(ke=>{G&&ln(ke instanceof Error?ke.message:String(ke))}).finally(()=>{G&&Pe(false)})};return timer=window.setTimeout(load,I==="FAQ库"?180:0),()=>{G=false,timer&&window.clearTimeout(timer)}},[I,faqReload,Qe,Ye,faqListPage,faqListPageSize]);
+(0,l.useEffect)(()=>{if(I!=="FAQ库")return;let G=()=>setFaqListPageSize(Math.max(4,Math.min(18,Math.floor((window.innerHeight-330)/54))));return G(),window.addEventListener("resize",G),()=>window.removeEventListener("resize",G)},[I]);
+let searchText=Qe.trim().toLowerCase(),On=Re.map((G,ke)=>({row:G,index:ke})).filter(({row:G})=>I==="FAQ库"||((Ye==="全部状态"||G[G.length-1]===Ye)&&G.some(ke=>String(ke||"").toLowerCase().includes(searchText)))),faqTotalPages=I==="FAQ库"?Math.max(1,Math.ceil(faqTotal/faqListPageSize)):Math.max(1,Math.ceil(On.length/faqListPageSize)),faqCurrentPage=Math.min(faqListPage,faqTotalPages-1),visibleRows=On,currentPageFaqIds=I==="FAQ库"?visibleRows.map(({index:G})=>String(Be[G]?.id||"")).filter(Boolean):[],allPageSelected=currentPageFaqIds.length>0&&currentPageFaqIds.every(G=>selectedFaqIds.includes(G)),toggleFaqId=G=>setSelectedFaqIds(ke=>ke.includes(G)?ke.filter(Ie=>Ie!==G):[...ke,G]),toggleCurrentPage=G=>setSelectedFaqIds(ke=>G?[...new Set([...ke,...currentPageFaqIds])]:ke.filter(Ie=>!currentPageFaqIds.includes(Ie))),en=(G,ke=false)=>{qe(G),Mn([...Re[G]]),mn(false),Me(ke)},Zn=()=>{qe(null),mn(true),Me(true),Mn(["","",I==="FAQ库"?"手动上传":"",I==="FAQ库"?"审核中":"启用"])};
+let Rn=async()=>{if(!an[0].trim()||!an[1].trim()){xe("请填写问题和回复内容");return}if(I==="FAQ库"){Se(true);try{let G=await v({id:!Le&&Ue!==null?Be[Ue]?.id:void 0,source:!Le&&Ue!==null?Be[Ue]?.source:void 0,question:an[0],answer:an[1],keywords:!Le&&Ue!==null?Be[Ue]?.keywords||[]:[],sourceFile:!Le&&Ue!==null?Be[Ue]?.sourceFile||an[2]||"手动上传":"手动上传",enabled:an[3]==="已上架"});Le?(_e([G,...Be]),Ae([[G.question,G.answer,G.sourceFile||"手动上传",G.enabled?"已上架":"审核中"],...Re]),qe(0),mn(false)):Ue!==null&&(_e(Be.map((ke,Ie)=>Ie===Ue?G:ke)),Ae(Re.map((ke,Ie)=>Ie===Ue?[G.question,G.answer,G.sourceFile||"手动上传",G.enabled?"已上架":"审核中"]:ke))),Me(false),xe("FAQ已保存到后台")}catch(G){xe("保存失败："+(G instanceof Error?G.message:String(G)))}finally{Se(false)}return}Se(true);try{let G=!Le&&Ue!==null?Be[Ue]:null,ke=await uaSaveFallbackRule({...G||{},id:G?.id,name:an[0],answer:an[1],category:an[2]||"通用",keywords:G?.keywords?.length?G.keywords:[an[0]],enabled:an[3]==="启用"}),Ie=await uaFallbackRules(),sn=Ie.findIndex(ze=>ze.id===ke.id);_e(Ie),Ae(Ie.map(ze=>[ze.name,ze.answer,ze.category||"通用",ze.enabled!==false?"启用":"停用"])),qe(sn>=0?sn:0),mn(false),Me(false),xe("敏感口径已同步到兜底回答库")}catch(G){xe("保存失败："+(G instanceof Error?G.message:String(G)))}finally{Se(false)}};
+let deleteSelectedFaqs=async()=>{if(!selectedFaqIds.length||faqDeleting)return;setFaqDeleting(true);try{let G=await p("/api/qa/batch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"delete",ids:selectedFaqIds})});xe("已删除 "+Number(G.changed||selectedFaqIds.length)+" 条FAQ"),setFaqDeleteOpen(false),setFaqBatchMode(false),setSelectedFaqIds([]),setFaqReload(G=>G+1)}catch(G){xe("批量删除失败："+(G instanceof Error?G.message:String(G)))}finally{setFaqDeleting(false)}},Ce=Le?an:Ue===null?null:Re[Ue],selectedRaw=!Le&&Ue!==null?Be[Ue]:null;
+return(0,w.jsxs)("div",{className:"library-layout",children:[(0,w.jsxs)("div",{className:"panel table-panel",children:[(0,w.jsxs)("div",{className:"table-heading",children:[(0,w.jsxs)("div",{children:[(0,w.jsx)("h2",{children:I}),(0,w.jsxs)("p",{children:[X,(I==="FAQ库"||I==="敏感口径")&&" · 后台 "+Re.length+" 条"]})]}),(0,w.jsxs)("div",{className:I==="FAQ库"?"faq-heading-actions":"",children:[(0,w.jsxs)("button",{className:"primary",disabled:faqDeleting,onClick:Zn,children:["＋ ",U]}),I==="FAQ库"&&!faqBatchMode&&(0,w.jsx)("button",{className:"faq-batch-toggle",onClick:()=>{setFaqBatchMode(true),setSelectedFaqIds([])},children:"批量删除"}),I==="FAQ库"&&faqBatchMode&&(0,w.jsx)("button",{className:"ghost faq-batch-cancel",disabled:faqDeleting,onClick:()=>{setFaqBatchMode(false),setSelectedFaqIds([])},children:"取消"}),I==="FAQ库"&&faqBatchMode&&(0,w.jsx)("button",{className:"danger faq-delete-selected",disabled:!selectedFaqIds.length||faqDeleting,onClick:()=>setFaqDeleteOpen(true),children:faqDeleting?"删除中…":"删除所选（"+selectedFaqIds.length+"）"})]})]}),(0,w.jsxs)("div",{className:"table-tools",children:[(0,w.jsxs)("label",{className:"search wide library-search",children:["⌕",(0,w.jsx)("input",{"aria-label":"搜索"+I,value:Qe,onChange:G=>{dn(G.target.value),setFaqListPage(0)},placeholder:I==="FAQ库"?"搜索问题或关联展项":"搜索规则名称或回复"})]}),(0,w.jsxs)("select",{"aria-label":"状态筛选",value:Ye,onChange:G=>{Sn(G.target.value),setFaqListPage(0)},children:[(0,w.jsx)("option",{children:"全部状态"}),(0,w.jsx)("option",{children:I==="FAQ库"?"已上架":"启用"}),(0,w.jsx)("option",{children:I==="FAQ库"?"审核中":"停用"})]})]}),(0,w.jsxs)("table",{className:faqBatchMode&&I==="FAQ库"?"faq-batch-table":"",children:[(0,w.jsx)("thead",{children:(0,w.jsxs)("tr",{children:[I==="FAQ库"&&faqBatchMode&&(0,w.jsx)("th",{className:"faq-select-column","aria-label":"选择FAQ"}),(0,w.jsx)("th",{className:"sequence-column",children:"序号"}),ve.map(G=>(0,w.jsx)("th",{children:G},G)),(0,w.jsx)("th",{children:"操作"})]})}),(0,w.jsx)("tbody",{children:[be&&(0,w.jsx)("tr",{children:(0,w.jsx)("td",{colSpan:ve.length+2+(faqBatchMode&&I==="FAQ库"?1:0),children:"正在读取"+I+"…"})}),Ee&&(0,w.jsx)("tr",{children:(0,w.jsxs)("td",{colSpan:ve.length+2+(faqBatchMode&&I==="FAQ库"?1:0),children:["读取失败：",Ee]})}),visibleRows.map(({row:G,index:ke},Ie)=>{let sn=String(Be[ke]?.id||"");return(0,w.jsxs)("tr",{className:Ue===ke?"selected-row":"",onClick:()=>en(ke),children:[I==="FAQ库"&&faqBatchMode&&(0,w.jsx)("td",{className:"faq-select-column",onClick:ze=>ze.stopPropagation(),children:(0,w.jsx)("input",{type:"checkbox","aria-label":"选择 "+G[0],checked:selectedFaqIds.includes(sn),onChange:()=>toggleFaqId(sn)})}),(0,w.jsx)("td",{className:"sequence-column",children:String((I==="FAQ库"?faqCurrentPage*faqListPageSize:0)+Ie+1).padStart(2,"0")}),G.map((ze,Fe)=>(0,w.jsx)("td",{children:Fe===G.length-1?(0,w.jsx)("span",{className:ze.includes("中")||ze==="停用"?"pill warning":"pill success",children:ze}):ze},Fe)),(0,w.jsx)("td",{children:(0,w.jsx)("button",{className:"text-button",onClick:ze=>{ze.stopPropagation(),en(ke,true)},children:"编辑"})})]},ke)})]}),(I==="FAQ库"&&faqBatchMode)&&(0,w.jsx)("tfoot",{children:(0,w.jsx)("tr",{children:(0,w.jsx)("td",{colSpan:ve.length+3,children:(0,w.jsxs)("label",{className:"faq-select-all-current",children:[(0,w.jsx)("input",{type:"checkbox",checked:allPageSelected,disabled:!currentPageFaqIds.length,onChange:G=>toggleCurrentPage(G.target.checked)}),(0,w.jsx)("span",{children:"全选当前页"}),(0,w.jsxs)("small",{children:["已选择 ",selectedFaqIds.length," 条"]})]})})})})]}),I==="FAQ库"&&On.length>0&&(0,w.jsxs)("div",{className:"library-pagination",children:[(0,w.jsx)("button",{disabled:faqCurrentPage===0,onClick:()=>setFaqListPage(G=>Math.max(0,G-1)),children:"上一页"}),(0,w.jsxs)("span",{children:["第 ",faqCurrentPage+1," / ",faqTotalPages," 页 · 共 ",On.length," 条 · 每页 ",faqListPageSize," 条"]}),(0,w.jsx)("button",{disabled:faqCurrentPage+1>=faqTotalPages,onClick:()=>setFaqListPage(G=>Math.min(faqTotalPages-1,G+1)),children:"下一页"})]})]}),(0,w.jsxs)("aside",{className:"panel info-card",children:[(0,w.jsx)("h3",{children:I==="FAQ库"?"FAQ详情":"口径说明"}),Ce?(0,w.jsxs)("div",{className:"record-detail",children:[(0,w.jsx)("label",{children:ve[0]}),Ne?(0,w.jsx)("textarea",{value:an[0],onChange:G=>Mn(an.map((ke,Ie)=>Ie===0?G.target.value:ke))}):(0,w.jsx)("strong",{children:Ce[0]}),(0,w.jsx)("label",{children:ve[1]}),Ne?(0,w.jsx)("textarea",{className:"answer-field",value:an[1],onChange:G=>Mn(an.map((ke,Ie)=>Ie===1?G.target.value:ke))}):(0,w.jsx)("p",{children:Ce[1]}),(0,w.jsx)("label",{children:ve[2]}),Ne&&I!=="FAQ库"?(0,w.jsx)("input",{value:an[2],onChange:G=>Mn(an.map((ke,Ie)=>Ie===2?G.target.value:ke))}):(0,w.jsx)("div",{className:I==="FAQ库"?"readonly faq-association-readonly":"",children:Ce[2]||"手动上传"}),(0,w.jsx)("label",{children:ve[3]}),Ne?(0,w.jsxs)("select",{value:an[3],onChange:G=>Mn(an.map((ke,Ie)=>Ie===3?G.target.value:ke)),children:[(0,w.jsx)("option",{children:I==="FAQ库"?"已上架":"启用"}),(0,w.jsx)("option",{children:I==="FAQ库"?"审核中":"停用"})]}):(0,w.jsx)("span",{className:Ce[3].includes("中")||Ce[3]==="停用"?"pill warning":"pill success",children:Ce[3]}),(0,w.jsx)("div",{className:"detail-meta",children:selectedRaw?.updatedAt||selectedRaw?.updated_at?"更新于 "+new Date(selectedRaw.updatedAt||selectedRaw.updated_at).toLocaleString("zh-CN"):"版本 V1.0"}),(0,w.jsx)("div",{className:"detail-actions",children:Ne?(0,w.jsxs)(w.Fragment,{children:[(0,w.jsx)("button",{className:"ghost",onClick:()=>{Me(false),mn(false)},children:"取消"}),(0,w.jsx)("button",{className:"primary",disabled:Ve,onClick:Rn,children:Ve?"保存中…":"保存"})]}):(0,w.jsx)("button",{className:"primary",onClick:()=>Me(true),children:"编辑内容"})})]}):(0,w.jsxs)("div",{className:"library-empty",children:[(0,w.jsx)("div",{className:"empty-icon",children:"≡"}),(0,w.jsx)("strong",{children:"选择一条记录查看详情"}),(0,w.jsx)("p",{children:"可在此查看内容、版本、适用范围和最近更新时间。"})]})]}),faqDeleteOpen&&(0,w.jsx)("div",{className:"file-delete-modal-backdrop",onMouseDown:G=>{G.target===G.currentTarget&&!faqDeleting&&setFaqDeleteOpen(false)},children:(0,w.jsxs)("div",{className:"file-delete-dialog faq-batch-delete-dialog",role:"dialog","aria-modal":"true","aria-labelledby":"faq-batch-delete-title",onMouseDown:G=>G.stopPropagation(),children:[(0,w.jsxs)("div",{className:"file-delete-dialog-head",children:[(0,w.jsx)("span",{children:"!"}),(0,w.jsxs)("div",{children:[(0,w.jsx)("h3",{id:"faq-batch-delete-title",children:"批量删除FAQ"}),(0,w.jsx)("p",{children:"删除后将从FAQ库、问答检索和向量索引中移除。"})]})]}),(0,w.jsxs)("div",{className:"faq-batch-delete-summary",children:[(0,w.jsx)("strong",{children:selectedFaqIds.length}),(0,w.jsx)("span",{children:"条 FAQ 已选择"})]}),(0,w.jsxs)("div",{className:"file-delete-dialog-actions",children:[(0,w.jsx)("button",{className:"ghost",disabled:faqDeleting,onClick:()=>setFaqDeleteOpen(false),children:"取消"}),(0,w.jsx)("button",{className:"file-delete-confirm",disabled:faqDeleting,onClick:deleteSelectedFaqs,children:faqDeleting?"删除中…":"确认删除"})]})]})})]})}`;
+const pagedLibraryComponent = libraryComponent
+  .replace('&&" · 后台 "+Re.length+" 条"', '&&" · 后台 "+(I==="FAQ库"?faqTotal:Re.length)+" 条"')
+  .replace('I==="FAQ库"&&On.length>0&&', 'I==="FAQ库"&&faqTotal>0&&')
+  .replace('" 页 · 共 ",On.length," 条 · 每页 "', '" 页 · 共 ",faqTotal," 条 · 每页 "');
+bundle = bundle.slice(0, libraryStart) + pagedLibraryComponent + bundle.slice(libraryEnd);
 
 const authShellStart = bundle.indexOf('function se(){');
 const authShellEnd = bundle.indexOf('function ce(', authShellStart);
@@ -327,13 +351,6 @@ bundle = replaceOnce(
   '(0,w.jsx)("small",{children:Me?"正在读取真实资料…":`原5180真实数据 · ${qe.length} 个`})',
   'null',
   'remove all-files legacy data subtitle',
-);
-
-bundle = replaceOnce(
-  bundle,
-  '(I==="FAQ库"||I==="敏感口径")&&` · 真实后台 ${Re.length} 条`',
-  '(I==="FAQ库"||I==="敏感口径")&&` · 后台 ${Re.length} 条`',
-  'remove real wording from knowledge row counts',
 );
 
 bundle = replaceOnce(
@@ -1430,6 +1447,95 @@ body.resizing-file-browser * { cursor: col-resize !important; user-select: none 
 .account-editor-empty { display: grid; height: 100%; place-items: center; color: #718096; }
 .account-publish-card { position: sticky; top: 18px; }
 .no-settings-access { padding: 42px; color: #718096; text-align: center; }
+
+/* FAQ batch actions use the same restrained blue/red action language as the rest of the console. */
+.faq-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+.faq-heading-actions > button {
+  min-width: 96px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.faq-heading-actions .faq-batch-toggle {
+  color: #c83f4b;
+  background: #fff;
+  border: 1px solid #efb9be;
+}
+.faq-heading-actions .faq-batch-toggle:hover {
+  color: #b62f3c;
+  background: #fff6f6;
+  border-color: #df9299;
+}
+.faq-heading-actions .faq-delete-selected {
+  color: #fff;
+  background: #d84b55;
+  border: 1px solid #d84b55;
+}
+.faq-heading-actions .faq-batch-cancel {
+  min-width: 72px;
+}
+.faq-heading-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.faq-batch-table .faq-select-column {
+  width: 44px;
+  min-width: 44px;
+  padding-right: 8px;
+  padding-left: 14px;
+  text-align: center;
+}
+.faq-batch-table input[type="checkbox"],
+.faq-select-all-current input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #2878ee;
+  cursor: pointer;
+}
+.faq-batch-table tfoot td {
+  padding: 0;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+.faq-select-all-current {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 16px;
+  color: #42536a;
+  font-size: 13px;
+  cursor: pointer;
+}
+.faq-select-all-current small {
+  margin-left: auto;
+  color: #8491a3;
+}
+.faq-batch-delete-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 20px;
+  padding: 16px 18px;
+  color: #53657a;
+  background: #f7f9fc;
+  border: 1px solid #d9e1eb;
+  border-radius: 8px;
+}
+.faq-batch-delete-summary strong {
+  color: #d13f4b;
+  font-size: 26px;
+  line-height: 1;
+}
 @media (max-width: 1180px) {
   .service-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .digital-human-console { grid-template-columns: 1fr; }
@@ -1454,8 +1560,8 @@ fs.writeFileSync(outputCssPath, css);
 
 let indexHtml = fs.readFileSync(indexPath, 'utf8');
 indexHtml = indexHtml
-  .replace(/index-real-analysis-v\d+\.js\?v=[^"']+/, 'index-real-analysis-v22.js?v=robot-review-toggle-3')
-  .replace(/upload-real-v\d+\.css\?v=[^"']+/, 'upload-real-v12.css?v=robot-review-toggle-3');
+  .replace(/index-real-analysis-v\d+\.js\?v=[^"']+/, 'index-real-analysis-v22.js?v=faq-batch-delete-1')
+  .replace(/upload-real-v\d+\.css\?v=[^"']+/, 'upload-real-v12.css?v=faq-batch-delete-1');
 fs.writeFileSync(indexPath, indexHtml);
 
 console.log('Built admin UI: v22 JS + v12 CSS');

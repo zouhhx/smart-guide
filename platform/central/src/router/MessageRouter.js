@@ -3501,7 +3501,13 @@ class MessageRouter {
     const result = {
       reply,
       actions: [action],
-      context: { answerSource: '讲解词规则' },
+      context: {
+        answerSource: '讲解词规则',
+        currentPptFileName: state.fileName,
+        currentPptSlideNumber: state.slideNumber || 1,
+        commentaryLevel: level,
+        commentaryMode: 'stored',
+      },
     };
 
     await this._processModelResult(clientInfo, result, seq, {
@@ -3836,12 +3842,24 @@ class MessageRouter {
       .trim();
     if (!value) return '';
 
+    const explicitLevel = /(?:精炼|精简|简洁|短版)/.test(value)
+      ? 'concise'
+      : /(?:标准版|标准讲解|普通版|默认版)/.test(value)
+        ? 'standard'
+        : /(?:详细版|详细讲解|深度版|深度讲解|完整版)/.test(value)
+          ? 'detailed'
+          : '';
+    const shortValue = value
+      .replace(/^(?:请|麻烦)(?:帮我|给我)?/, '')
+      .replace(/^(?:帮我|给我)/, '')
+      .replace(/(?:就可以|就行|即可|就好|就好了|吧)$/, '');
+
     const currentContentIntent =
       /(当前|这页|这一页|本页|这个内容|这个文件|这个PPT|这个ppt|当前内容|当前页面|当前页|当前PPT|当前ppt|正在播放)/.test(value) &&
       /(介绍|讲解|讲一下|讲讲|说一下|说说|播报|播放讲解词|讲什么)/.test(value);
     const shortIntroIntent =
-      value.length <= 12 &&
-      /^(快速介绍|快速介绍一下|简单说|简单介绍|简单介绍一下|简单讲一下|简短介绍|简要介绍|简要介绍一下|精炼介绍|精炼介绍一下|精炼的介绍一下|一句话介绍|概括一下|快速过一下|详细介绍|详细介绍一下|详细的介绍一下|详细讲|详细讲一下|展开讲|展开讲讲|讲深一点|多讲一点|深入介绍|完整介绍|讲细一点|介绍一下|讲解|讲解下|讲解一下|帮我讲解|帮我讲解一下|给我讲解|给我讲解一下|讲一下|讲讲)$/.test(value);
+      shortValue.length <= 16 &&
+      /^(快速介绍|快速介绍一下|简单说|简单介绍|简单介绍一下|简单讲一下|简短介绍|简要介绍|简要介绍一下|精炼介绍|精炼介绍一下|精炼的介绍一下|精简介绍|精简介绍一下|精简的介绍一下|一句话介绍|概括一下|快速过一下|30秒介绍|30秒介绍一下|详细介绍|详细介绍一下|详细的介绍一下|详细讲|详细讲一下|展开讲|展开讲讲|讲深一点|多讲一点|深入介绍|完整介绍|讲细一点|介绍一下|讲解|讲解下|讲解一下|讲一下|讲讲)$/.test(shortValue);
 
     if (!currentContentIntent && !shortIntroIntent) return '';
 
@@ -3850,7 +3868,8 @@ class MessageRouter {
       !/(这页|这一页|本页|当前|当前页|当前内容).*(讲什么|介绍|讲解|讲一下)/.test(value);
     if (looksLikeSpecificQuestion) return '';
 
-    if (/(快速|简单|简短|简要|精炼|30秒|一句话|概括|快速过)/.test(value)) return 'concise';
+    if (explicitLevel) return explicitLevel;
+    if (/(快速|简单|简短|简要|精炼|精简|简洁|30秒|一句话|概括|快速过)/.test(value)) return 'concise';
     if (/(详细|展开|讲深|多讲|深入|完整|讲细)/.test(value)) return 'detailed';
     return 'standard';
   }
@@ -4437,6 +4456,7 @@ class MessageRouter {
       pptFileName: enrichedContext?.currentPptFileName || '',
       pptTitle: enrichedContext?.currentPptTitle || '',
       pptSlideNumber: enrichedContext?.currentPptSlideNumber || null,
+      commentaryLevel: enrichedContext?.commentaryLevel || '',
       qaScopedToCurrentUnit: enrichedContext?.qaScopedToCurrentUnit === true,
       qaCurrentUnitRequired: enrichedContext?.qaCurrentUnitRequired === true,
       technicalFallback: enrichedContext?.technicalFallback === true,
@@ -4473,6 +4493,7 @@ class MessageRouter {
       pptFileName: enrichedContext?.currentPptFileName || '',
       pptTitle: enrichedContext?.currentPptTitle || '',
       pptSlideNumber: enrichedContext?.currentPptSlideNumber || null,
+      commentaryLevel: enrichedContext?.commentaryLevel || '',
       qaScopedToCurrentUnit: enrichedContext?.qaScopedToCurrentUnit === true,
       qaCurrentUnitRequired: enrichedContext?.qaCurrentUnitRequired === true,
       technicalFallback: enrichedContext?.technicalFallback === true,

@@ -102,85 +102,72 @@ class AvatarTargetCoordinator {
     };
   }
 
-  async say(text) {
+  async say(text, target, { signal } = {}) {
     const value = String(text || '').trim();
     if (!value) throw new Error('digital-human text is required');
-
-    const now = Date.now();
-    if (value === this.lastSayText && now - this.lastSayAt < 5000) {
-      return { ...this.getTargetStatus(), deduplicated: true };
-    }
+    const selected = this.getTargetStatus();
+    const expected = String(target || selected.target);
+    const check = () => {
+      signal?.throwIfAborted();
+      if (expected !== String(this.selectedTarget)) throw new Error('AVATAR_TARGET_MISMATCH');
+    };
+    check();
     if (this.sayPromise) {
-      await this.sayPromise;
-      return this.say(value);
+      await this.sayPromise.catch(() => {});
+      check();
+      return this.say(value, expected, { signal });
     }
-
+    if (value === this.lastSayText && Date.now() - this.lastSayAt < 5000) {
+      return { ...selected, deduplicated: true };
+    }
     this.lastSayText = value;
-    this.lastSayAt = now;
-    this.sayPromise = this._sayToSelectedTarget(value)
-      .catch((error) => {
-        this.lastSayText = '';
-        this.lastSayAt = 0;
-        throw error;
-      })
-      .finally(() => {
-        this.sayPromise = null;
-      });
-    return this.sayPromise;
+    this.lastSayAt = Date.now();
+    const pending = this._sayToSelectedTarget(value, selected, signal, check)
+      .catch(error => { this.lastSayText = ''; this.lastSayAt = 0; throw error; })
+      .finally(() => { if (this.sayPromise === pending) this.sayPromise = null; });
+    this.sayPromise = pending;
+    return pending;
   }
 
-  async _sayToSelectedTarget(text) {
-    const selected = this.getTargetStatus();
-    if (!selected.central && !selected.online) {
-      throw new Error(`${selected.screenNumber}号屏不在线`);
+  async interrupt(target) {
+    // The bridge has a single selected avatar session; never stop a different screen.
+    if (String(target) !== String(this.selectedTarget)) {
+      return { ok: true, skipped: true, reason: 'AVATAR_ON_OTHER_TARGET' };
     }
+    this.lastSayText = '';
+    this.lastSayAt = 0;
+    return this._request('/api/avatar/interrupt', {});
+  }
 
-    const timeoutMs = Math.max(8000, Number(config.TTS.avatarTimeoutMs) || 30000);
-    const deadline = Date.now() + timeoutMs;
-    let lastError = null;
-
-    let status = null;
+  async _sayToSelectedTarget(text, selected, signal, check) {
+    if (!selected.central && !selected.online) throw new Error(`${selected.screenNumber}号屏不在线`);
+    const deadline = Date.now() + Math.max(8000, Number(config.TTS.avatarTimeoutMs) || 30000);
+    let status, lastError;
     while (Date.now() < deadline) {
+      check();
       try {
-        status = await this._request('/health', null, 'GET');
+        status = await this._request('/health', null, 'GET', signal);
+        check();
         const connectedAt = Date.parse(status?.session?.connectedAt || '');
-        const isCurrentSession = status?.online
-          && (!this.selectionRequiresFreshSession || connectedAt >= this.selectionChangedAt - 2000);
-        if (isCurrentSession) break;
-      } catch (err) {
-        lastError = err;
-      }
-      await this._delay(RETRY_INTERVAL_MS);
+        if (status?.online && (!this.selectionRequiresFreshSession || connectedAt >= this.selectionChangedAt - 2000)) break;
+      } catch (err) { check(); lastError = err; }
+      await this._delay(RETRY_INTERVAL_MS, signal);
     }
-
-    if (!status?.online) {
-      throw new Error(`等待${selected.label}数字人上线超时: ${lastError?.message || 'no session'}`);
-    }
-
+    check();
+    if (!status?.online) throw new Error(`等待${selected.label}数字人上线超时: ${lastError?.message || 'no session'}`);
     if (this.selectionRequiresFreshSession || !status.desiredOpen) {
-      const opened = await this._request('/api/avatar/open', {});
+      const opened = await this._request('/api/avatar/open', {}, 'POST', signal);
+      check();
       if (!opened?.ok) throw new Error(opened?.error || 'digital human open failed');
-      await this._delay(4500);
+      await this._delay(4500, signal);
     }
+    check();
     this.selectionRequiresFreshSession = false;
-
-    while (Date.now() < deadline) {
-      try {
-        const result = await this._request('/api/avatar/say', { text });
-        if (result.ok === true) {
-          return { ...result, ...this.getTargetStatus() };
-        }
-        lastError = new Error(result.error || 'digital human say failed');
-      } catch (err) {
-        lastError = err;
-      }
-
-      const remaining = deadline - Date.now();
-      if (remaining <= 0) break;
-      await this._delay(Math.min(RETRY_INTERVAL_MS, remaining));
-    }
-
-    throw new Error(`等待${selected.label}数字人上线超时: ${lastError?.message || 'no session'}`);
+    // Do not retry a possibly delivered text command: that can replay canceled speech.
+    const result = await this._request('/api/avatar/say', { text }, 'POST', signal);
+    check();
+    if (result?.ok !== true) throw new Error(result?.error || 'avatar say rejected');
+    return { ...selected, ...result };
   }
 
   deactivateAll() {
@@ -275,8 +262,14 @@ class AvatarTargetCoordinator {
     fs.renameSync(TARGET_STATE_TEMP_URL, TARGET_STATE_URL);
   }
 
-  _delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  _delay(ms, signal) {
+    signal?.throwIfAborted();
+    return new Promise((resolve, reject) => {
+      const done = () => { signal?.removeEventListener('abort', cancel); resolve(); };
+      const timer = setTimeout(done, ms);
+      const cancel = () => { clearTimeout(timer); signal.removeEventListener('abort', cancel); reject(signal.reason); };
+      signal?.addEventListener('abort', cancel, { once: true });
+    });
   }
 
   _setCentralAvatarActive(active) {
@@ -289,8 +282,9 @@ class AvatarTargetCoordinator {
     });
   }
 
-  async _request(path, body = {}, method = 'POST') {
-    const options = { method, headers: {} };
+  async _request(path, body = {}, method = 'POST', signal) {
+    const timeout = AbortSignal.timeout(1800);
+    const options = { method, headers: {}, signal: signal ? AbortSignal.any([signal, timeout]) : timeout };
     if (method !== 'GET') {
       options.headers['Content-Type'] = 'application/json; charset=utf-8';
       options.body = JSON.stringify(body);

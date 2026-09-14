@@ -82,3 +82,45 @@ test('an explanatory FAQ about a command remains eligible for ranking', () => {
     fs.rmSync(dataDir, { recursive: true, force: true });
   }
 });
+
+test('stored commentary events retain the routed file, page, tier and spoken preview', () => {
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'usage-commentary-route-'));
+  const store = new UsageStore({ dataDir });
+  try {
+    const event = store.recordInteraction({
+      question: '详细介绍一下当前页面',
+      answer: '按详细版播放当前PPT讲解词',
+      answerSource: '讲解词规则',
+      target: 2,
+      pptFileName: '演示文件.pptx',
+      pptSlideNumber: 6,
+      commentaryLevel: 'detailed',
+      actions: [{
+        type: 'speak',
+        target: 2,
+        params: {
+          text: '这是第六页的详细版讲解词。',
+          commentaryMode: 'stored',
+          commentaryLevel: 'detailed',
+          currentPptFileName: '演示文件.pptx',
+          currentPptSlideNumber: '6',
+        },
+      }],
+    });
+
+    assert.equal(event.pptFileName, '演示文件.pptx');
+    assert.equal(event.pptSlideNumber, 6);
+    assert.equal(event.commentaryLevel, 'detailed');
+    assert.deepEqual(event.actions[0], {
+      type: 'speak',
+      target: 2,
+      commentaryLevel: 'detailed',
+      commentaryMode: 'stored',
+      currentPptFileName: '演示文件.pptx',
+      currentPptSlideNumber: 6,
+      textPreview: '这是第六页的详细版讲解词。',
+    });
+  } finally {
+    fs.rmSync(dataDir, { recursive: true, force: true });
+  }
+});

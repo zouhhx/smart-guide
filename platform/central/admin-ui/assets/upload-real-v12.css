@@ -1996,6 +1996,95 @@ body.resizing-file-browser * { cursor: col-resize !important; user-select: none 
 .account-editor-empty { display: grid; height: 100%; place-items: center; color: #718096; }
 .account-publish-card { position: sticky; top: 18px; }
 .no-settings-access { padding: 42px; color: #718096; text-align: center; }
+
+/* FAQ batch actions use the same restrained blue/red action language as the rest of the console. */
+.faq-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+.faq-heading-actions > button {
+  min-width: 96px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.faq-heading-actions .faq-batch-toggle {
+  color: #c83f4b;
+  background: #fff;
+  border: 1px solid #efb9be;
+}
+.faq-heading-actions .faq-batch-toggle:hover {
+  color: #b62f3c;
+  background: #fff6f6;
+  border-color: #df9299;
+}
+.faq-heading-actions .faq-delete-selected {
+  color: #fff;
+  background: #d84b55;
+  border: 1px solid #d84b55;
+}
+.faq-heading-actions .faq-batch-cancel {
+  min-width: 72px;
+}
+.faq-heading-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.faq-batch-table .faq-select-column {
+  width: 44px;
+  min-width: 44px;
+  padding-right: 8px;
+  padding-left: 14px;
+  text-align: center;
+}
+.faq-batch-table input[type="checkbox"],
+.faq-select-all-current input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #2878ee;
+  cursor: pointer;
+}
+.faq-batch-table tfoot td {
+  padding: 0;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+.faq-select-all-current {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 16px;
+  color: #42536a;
+  font-size: 13px;
+  cursor: pointer;
+}
+.faq-select-all-current small {
+  margin-left: auto;
+  color: #8491a3;
+}
+.faq-batch-delete-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 20px;
+  padding: 16px 18px;
+  color: #53657a;
+  background: #f7f9fc;
+  border: 1px solid #d9e1eb;
+  border-radius: 8px;
+}
+.faq-batch-delete-summary strong {
+  color: #d13f4b;
+  font-size: 26px;
+  line-height: 1;
+}
 @media (max-width: 1180px) {
   .service-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .digital-human-console { grid-template-columns: 1fr; }
