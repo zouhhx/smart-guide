@@ -1,0 +1,13 @@
+{
+  "product": "exhibition-hall-android-phone",
+  "versionName": "1.8",
+  "versionCode": 9,
+  "packageName": "com.codexpro.digitalhumanasr",
+  "file": "app-release-simple-screen-names-v1.8-20260914.apk",
+  "sizeBytes": 20581515,
+  "sha256": "8E38D18F9BF344DEE8613862B296D8FED3EF04FB1B4F6D38EEECFAC68E7AE928",
+  "signingCertificateSha256": "18fcfbb0c08687a5f5995d56c5a97dfa67d8e2d58005d1d142cb50c3029f31bd",
+  "signing": "Android Debug certificate; Release behavior; v2/v3 verified",
+  "provenance": "Built from the local working tree on 2026-09-14 with the screen-name simplification; not included in the v1.7 baseline bundle.",
+  "verification": "19 JVM tests passed; Lint 0 errors / 102 warnings; no device test. INT-001 remains open."
+}

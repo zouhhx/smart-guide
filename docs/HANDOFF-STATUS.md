@@ -6,7 +6,7 @@
 | --- | --- |
 | central | 61 实际运行目录 exhibition-hall-new/runtime/exhibition-hall-platform，2026-09-11 15:09 采集；原 HEAD 70baf89763523547adf7401e30284b7da843a1b1，加采集时全部工作区修改和新增文件 |
 | display-windows | 本地 exhibition-hall-cs 当前 v15 修复源码 |
-| phone-android | v1.7 交接基线 0e7bef0c8597017de9ddcfd3abb69ebe713ef7d6 的源码 |
+| phone-android | v1.8 main 提交 695f55dc249ae0fc8beb8506faf912590f0fe42d 的源码（2026-09-14 更新） |
 | robot-android | gitlab-handoff-20260910 机器人交付 |
 | robot-hub | 同一机器人交付的 V5 清理版源码 |
 | voice-gateway | v0.3.8 恢复树 dbd31c35b38603b4cb2491e36798a91090427294 |
@@ -35,3 +35,8 @@
 本地 TTS 明确为 Qwen3 TTS 0.6B，源码可缺省。61 发现运行目录和服务 EXE，但未确认完整安装包，因此当前没有上传 TTS 安装包或模型权重，不把单独 EXE 冒充完整交付。
 
 各端历史交接材料仍保留以便查询，旧路径、独立仓库规划及上传命令不再作为当前操作规范。后续统一在根 README 对应目录开发。
+
+## 手机端 v1.8 更新记录
+
+从独立手机仓库 main 同步全部受 Git 管理的文件，源提交为 695f55dc249ae0fc8beb8506faf912590f0fe42d。总仓库 asr-apk-v1.8 标签指向此次整合提交，源仓库标签保持原样。交付方记录 19 项 JVM 测试通过及 Lint/构建/签名验证通过，本次整合未重新构建或真机测试。APK SHA-256 已核对，与版本说明一致；安装包作为 GitLab 发布附件上传。
+

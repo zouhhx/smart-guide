@@ -17,3 +17,5 @@ a0575555018a401cbb43389036180e05cc83eb589c21b153344d858d57cf173a  VoiceGateway-G
 ```
 
 未包含 Qwen3 TTS 0.6B 完整安装包。新客户正式发布需公司认可的签名及对应环境配置。
+
+手机端最新版本为 v1.8（versionCode 9），请到 [v1.8 发布附件](http://192.168.18.233:8090/lianzong/smart-guide-20260910/-/releases/asr-apk-v1.8) 下载。上述 v1.7 APK 只保留供历史回退，不包含屏幕名称简化更新。

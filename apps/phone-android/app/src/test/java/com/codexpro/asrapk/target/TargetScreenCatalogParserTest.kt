@@ -14,13 +14,29 @@ class TargetScreenCatalogParserTest {
         assertEquals(1788945809000L, directory.serverTime)
         assertEquals(listOf("2", "4"), directory.screens.map { it.targetScreenId })
         val screen = directory.screens.first()
-        assertEquals("WIN-20241001ETD (2号屏)", screen.displayName)
+        assertEquals("2号屏", screen.displayName)
         assertTrue(screen.online)
         assertEquals("ppt", screen.currentView)
         assertEquals("九天人工智能.pptx", screen.currentPptFileName)
         assertEquals(3, screen.currentPptSlideNumber)
         assertFalse(directory.screens[1].online)
         assertNull(directory.screens[1].currentView)
+    }
+
+    @Test
+    fun `labels use authoritative numbers instead of device names or list positions`() {
+        val directory = TargetScreenCatalogParser.parse(
+            """{"screens":[
+                {"screenNumber":11,"name":"2号屏 (incorrect name)","online":false},
+                {"screenNumber":4,"name":"DESKTOP-CJ285E1 (4号屏)","online":true},
+                {"screenNumber":2,"name":"WIN-20241001ETD (2号屏)","online":true},
+                {"screenNumber":7,"online":false}
+            ]}"""
+        )
+
+        assertEquals(listOf("2", "4", "7", "11"), directory.screens.map { it.targetScreenId })
+        assertEquals(listOf("2号屏", "4号屏", "7号屏", "11号屏"), directory.screens.map { it.displayName })
+        assertEquals(listOf(true, true, false, false), directory.screens.map { it.online })
     }
 
     @Test(expected = IllegalArgumentException::class)

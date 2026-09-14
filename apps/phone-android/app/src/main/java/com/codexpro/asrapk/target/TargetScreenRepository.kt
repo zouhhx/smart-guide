@@ -162,8 +162,7 @@ object TargetScreenCatalogParser {
                 add(
                     TargetScreen(
                         targetScreenId = screenNumber.toString(),
-                        displayName = item.optString("name").trim().takeIf(String::isNotEmpty)
-                            ?: "${screenNumber}号屏",
+                        displayName = "${screenNumber}号屏",
                         screenType = status?.optString("view")
                             ?.takeIf(String::isNotBlank) ?: "SCREEN",
                         online = item.optBoolean("online", false),

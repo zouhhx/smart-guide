@@ -1,10 +1,18 @@
 # PROJECT_STATUS
 
-> 快照日期：2026-09-10
+> 快照日期：2026-09-14
 >
 > 项目目录：`D:\work\exhibition-hall_AsrApk`
 >
-> Android 版本：`versionName=1.7`、`versionCode=8`、包名 `com.codexpro.digitalhumanasr`
+> Android 版本：`versionName=1.8`、`versionCode=9`、包名 `com.codexpro.digitalhumanasr`
+
+## 2026-09-14：屏幕名称简化
+
+- 首页、选屏列表和选择成功提示统一显示 `${screenNumber}号屏`，例如“2号屏”“4号屏”，不再显示接口中的电脑名称或型号。
+- 仍使用接口权威 `screenNumber`，不是列表序号；实际 target、排序、在线状态、已选屏幕和所有控制接口保持不变。
+- 新包路径：`releases/app-release-simple-screen-names-v1.8-20260914.apk`；验证与安装说明见 `releases/v1.8-release-notes.md`。
+- 2026-09-10 交付 ZIP/bundle 仍是 v1.7 历史基线，不包含本次修改；后续整合应使用本工作区最新源码和 v1.8 成品。
+- 偶发打断失败仍是已知问题，本次仅简化名称。下方 v1.7 验证记录保留作为历史记录。
 
 ## 当前目标
 
